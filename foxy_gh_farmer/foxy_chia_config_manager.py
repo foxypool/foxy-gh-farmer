@@ -78,6 +78,10 @@ class FoxyChiaConfigManager:
             foxy_config: Dict,
             config_was_updated: bool = False
     ):
+        if "full_node_peer" in chia_foxy_config["wallet"] or "full_node_peers" in chia_foxy_config["wallet"]:
+            chia_foxy_config["wallet"].pop("full_node_peer", None)
+            chia_foxy_config["wallet"].pop("full_node_peers", None)
+            config_was_updated = True
         if chia_foxy_config["logging"]["log_level"] != foxy_config["log_level"] \
            or chia_foxy_config["logging"]["log_stdout"] is not False \
            or chia_foxy_config["logging"]["log_syslog"] is not True:
