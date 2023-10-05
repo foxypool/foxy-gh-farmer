@@ -1,9 +1,12 @@
 from asyncio import sleep
 from logging import getLogger
+from typing import Dict
 
 from pyparsing import Word, alphas, Suppress, Combine, nums, string, Optional, Regex
 
 import aioudp
+
+from foxy_gh_farmer.foxy_gh_farmer_logging import add_stdout_handler
 
 
 def map_priority_to_log_level(priority: int) -> int:
@@ -49,13 +52,16 @@ class Parser(object):
         }
 
 
-async def setup_syslog_server():
+async def setup_syslog_server(logging_config: Dict):
     parser = Parser()
 
     async def handler(connection):
         async for message in connection:
             parsed = parser.parse(bytes.decode(message.strip()))
             logger = getLogger(parsed["service"])
+            logger.propagate = False
+            if not logger.hasHandlers():
+                add_stdout_handler(logger, logging_config=logging_config)
             logger.log(parsed["log_level"], parsed["message"])
 
     async with aioudp.serve("127.0.0.1", 11514, handler):

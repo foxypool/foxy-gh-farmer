@@ -58,7 +58,7 @@ class FoxyFarmer:
         foxy_config_manager = FoxyConfigManager(self._config_path)
         foxy_config = foxy_config_manager.load_config()
 
-        asyncio.create_task(setup_syslog_server())
+        asyncio.create_task(setup_syslog_server(logging_config=config["logging"]))
 
         self._daemon_proxy = await create_start_daemon_connection(self._foxy_root, config, foxy_config)
         assert self._daemon_proxy is not None

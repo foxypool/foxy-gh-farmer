@@ -6,22 +6,8 @@ import colorlog
 from chia.util.chia_logging import initialize_logging, default_log_level
 
 
-def initialize_logging_with_stdout(logging_config: Dict, root_path: Path):
+def add_stdout_handler(logger: logging.Logger, logging_config: Dict):
     service_name = "foxy_gh_farmer"
-    initialize_logging(
-        service_name=service_name,
-        logging_config={
-            "log_filename": "log/debug.log",
-            "log_level": "INFO",
-            "log_maxbytessrotation": 52428800,
-            "log_maxfilesrotation": 7,
-            "log_stdout": False,
-            "log_syslog": False,
-            "log_syslog_host": "127.0.0.1",
-            "log_syslog_port": 514,
-        },
-        root_path=root_path,
-    )
     file_name_length = 33 - len(service_name)
     log_date_format = "%Y-%m-%dT%H:%M:%S"
     stdout_handler = colorlog.StreamHandler()
@@ -33,7 +19,26 @@ def initialize_logging_with_stdout(logging_config: Dict, root_path: Path):
             reset=True,
         )
     )
-    log_level = logging_config.get("log_level", default_log_level)
-    stdout_handler.setLevel(log_level)
+    stdout_handler.setLevel(logging_config.get("log_level", default_log_level))
+    logger.addHandler(stdout_handler)
+
+
+def initialize_logging_with_stdout(logging_config: Dict, root_path: Path):
+    service_name = "foxy_gh_farmer"
+    initialize_logging(
+        service_name=service_name,
+        logging_config={
+            "log_filename": logging_config["log_filename"],
+            "log_level": logging_config["log_level"],
+            "log_maxbytessrotation": logging_config["log_maxbytessrotation"],
+            "log_maxfilesrotation": logging_config["log_maxfilesrotation"],
+            "log_stdout": False,
+            "log_syslog": False,
+            "log_syslog_host": "127.0.0.1",
+            "log_syslog_port": 514,
+        },
+        root_path=root_path,
+    )
+
     root_logger = logging.getLogger()
-    root_logger.addHandler(stdout_handler)
+    add_stdout_handler(root_logger, logging_config=logging_config)
