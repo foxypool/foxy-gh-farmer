@@ -1,0 +1,9 @@
+version: '3'
+services:
+  farmer:
+    image: ghcr.io/foxypool/foxy-gh-farmer:latest
+    restart: unless-stopped
+    volumes:
+      - /path/to/foxy-gh-farmer/data:/root/.foxy-gh-farmer
+      - /path/to/foxy-gh-farmer/foxy-gh-farmer.yaml:/app/foxy-gh-farmer.yaml
+      - /path/to/your/chia/keys:/root/.chia_keys
