@@ -79,7 +79,7 @@ async def join_pool(
 
 
 async def stop_wallet(daemon_proxy: DaemonProxy, close_daemon: bool):
-    await daemon_proxy.stop_service("wallet")
+    await daemon_proxy.stop_service("chia_wallet")
 
     if close_daemon:
         r = await daemon_proxy.exit()
