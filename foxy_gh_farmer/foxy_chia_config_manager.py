@@ -43,12 +43,22 @@ class FoxyChiaConfigManager:
         has_foxy_config = foxy_config_manager.has_config()
         foxy_config = foxy_config_manager.load_config()
 
+        foxy_config_was_updated = False
         # Init the foxy_gh_farmer config from the chia foxy config
         if has_foxy_config is False:
             foxy_config["plot_directories"] = config["harvester"]["plot_directories"]
             foxy_config["harvester_num_threads"] = config["harvester"]["num_threads"]
             foxy_config["farmer_reward_address"] = config["farmer"]["xch_target_address"]
             foxy_config["pool_payout_address"] = config["farmer"]["xch_target_address"]
+            foxy_config_was_updated = True
+
+        if foxy_config["farmer_reward_address"] == "" and config["farmer"]["xch_target_address"] != "":
+            foxy_config["farmer_reward_address"] = config["farmer"]["xch_target_address"]
+            foxy_config_was_updated = True
+        if foxy_config["pool_payout_address"] == "" and config["farmer"]["xch_target_address"] != "":
+            foxy_config["pool_payout_address"] = config["farmer"]["xch_target_address"]
+            foxy_config_was_updated = True
+        if foxy_config_was_updated:
             foxy_config_manager.save_config(foxy_config)
 
         config_was_updated = self.ensure_different_ports(config, config_was_updated)
