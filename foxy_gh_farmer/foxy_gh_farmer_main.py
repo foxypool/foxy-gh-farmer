@@ -91,9 +91,17 @@ class FoxyFarmer:
     async def setup_process_global_state(self) -> None:
         if sys.platform == "win32" or sys.platform == "cygwin":
             # pylint: disable=E1101
-            signal.signal(signal.SIGBREAK, self._accept_signal)
-            signal.signal(signal.SIGINT, self._accept_signal)
-            signal.signal(signal.SIGTERM, self._accept_signal)
+            # signal.signal(signal.SIGBREAK, self._accept_signal)
+            # signal.signal(signal.SIGINT, self._accept_signal)
+            # signal.signal(signal.SIGTERM, self._accept_signal)
+            from win32api import SetConsoleCtrlHandler
+
+            def on_exit(sig, func=None):
+                loop = asyncio.new_event_loop()
+                loop.run_until_complete(loop.create_task(self.stop()))
+                loop.stop()
+
+            SetConsoleCtrlHandler(on_exit, True)
         else:
             loop = asyncio.get_running_loop()
             loop.add_signal_handler(
