@@ -30,7 +30,10 @@ def initialize_logging_with_stdout(logging_config: Dict, root_path: Path):
         logging_config={
             "log_filename": logging_config["log_filename"],
             "log_level": logging_config["log_level"],
-            "log_maxbytesrotation": logging_config["log_maxbytesrotation"],
+            "log_maxbytesrotation": logging_config.get(
+                "log_maxbytesrotation",
+                logging_config.get("log_maxbytessrotation", 52428800)
+            ),
             "log_maxfilesrotation": logging_config["log_maxfilesrotation"],
             "log_stdout": False,
             "log_syslog": False,
