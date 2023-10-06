@@ -17,8 +17,11 @@ from foxy_gh_farmer.gigahorse_binary_manager import GigahorseBinaryManager
 
 async def launch_start_daemon(root_path: Path, foxy_config: Dict[str, Any]) -> subprocess.Popen:
     os.environ["CHIA_ROOT"] = str(root_path)
-    if foxy_config.get("recompute_hosts") is not None and len(foxy_config["recompute_hosts"]) > 0:
-        os.environ["RECOMPUTE_HOST"] = ",".join(foxy_config["recompute_hosts"])
+    if foxy_config.get("recompute_hosts") is not None:
+        if isinstance(foxy_config["recompute_hosts"], str):
+            os.environ["CHIAPOS_RECOMPUTE_HOST"] = foxy_config["recompute_hosts"]
+        elif isinstance(foxy_config["recompute_hosts"], list) and len(foxy_config["recompute_hosts"]) > 0:
+            os.environ["CHIAPOS_RECOMPUTE_HOST"] = ",".join(foxy_config["recompute_hosts"])
     if foxy_config.get("chiapos_max_cores") is not None:
         os.environ["CHIAPOS_MAX_CORES"] = foxy_config["chiapos_max_cores"]
     if foxy_config.get("chiapos_max_cuda_devices") is not None:
