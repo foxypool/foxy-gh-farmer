@@ -22,6 +22,10 @@ async def launch_start_daemon(root_path: Path, foxy_config: Dict[str, Any]) -> s
             os.environ["CHIAPOS_RECOMPUTE_HOST"] = foxy_config["recompute_hosts"]
         elif isinstance(foxy_config["recompute_hosts"], list) and len(foxy_config["recompute_hosts"]) > 0:
             os.environ["CHIAPOS_RECOMPUTE_HOST"] = ",".join(foxy_config["recompute_hosts"])
+    if foxy_config.get("recompute_connect_timeout") is not None:
+        os.environ["CHIAPOS_RECOMPUTE_CONNECT_TIMEOUT"] = foxy_config["recompute_connect_timeout"]
+    if foxy_config.get("recompute_retry_interval") is not None:
+        os.environ["CHIAPOS_RECOMPUTE_RETRY_INTERVAL"] = foxy_config["recompute_retry_interval"]
     if foxy_config.get("chiapos_max_cores") is not None:
         os.environ["CHIAPOS_MAX_CORES"] = foxy_config["chiapos_max_cores"]
     if foxy_config.get("chiapos_max_cuda_devices") is not None:

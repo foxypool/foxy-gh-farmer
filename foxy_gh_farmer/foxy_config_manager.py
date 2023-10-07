@@ -15,13 +15,6 @@ def _get_default_config():
         'listen_host': '127.0.0.1',
         'enable_harvester': True,
         'recompute_hosts': [],
-        'chiapos_max_cores': None,
-        'chiapos_max_cuda_devices': None,
-        'chiapos_max_opencl_devices': None,
-        'chiapos_max_gpu_devices': None,
-        'chiapos_opencl_platform': None,
-        'chiapos_min_gpu_log_entries': None,
-        'cuda_visible_devices': None,
     }
 
 
