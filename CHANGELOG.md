@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix a crash on startup when the chia config is missing the `connect_to_unknown_peers` config option
+
 ## [1.0.0] - 2023-10-08
 
 ### Added

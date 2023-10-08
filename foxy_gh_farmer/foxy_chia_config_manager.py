@@ -122,7 +122,7 @@ class FoxyChiaConfigManager:
             config_was_updated = True
 
         # Ensure the wallet syncs with unknown peers
-        if chia_foxy_config["wallet"]["connect_to_unknown_peers"] is not True:
+        if chia_foxy_config["wallet"].get("connect_to_unknown_peers") is not True:
             chia_foxy_config["wallet"]["connect_to_unknown_peers"] = True
             config_was_updated = True
 
