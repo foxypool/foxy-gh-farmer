@@ -13,18 +13,20 @@ Foxy-GH-Farmer is useful in the following scenarios:
 
 ### Using the binary
 
-1. Download the latest binary zip for your OS from the [releases page](https://github.com/foxypool/foxy-gh-farmer/releases/latest)
-2. Run the binary, it will create a default `foxy-gh-farmer.yaml` in the current directory based on your current chia `config.yaml`
-3. Edit the `foxy-gh-farmer.yaml` to your liking and restart foxy-gh-farmer
-4. Profit!
+1. On Linux ensure you have `libgomp1` as well as `ocl-icd-libopencl1` installed
+2. Download the latest binary zip for your OS from the [releases page](https://github.com/foxypool/foxy-gh-farmer/releases/latest)
+3. Run the binary, it will create a default `foxy-gh-farmer.yaml` in the current directory based on your current chia `config.yaml`
+4. Edit the `foxy-gh-farmer.yaml` to your liking and restart foxy-gh-farmer
+5. Profit!
 
 ### Running from source
 
-1. Clone the git repo and cd into it: `git clone https://github.com/foxypool/foxy-gh-farmer && cd foxy-gh-farmer`
-2. Install the dependencies: `pip install .`
-3. Run using `foxy-gh-farmer`, it will create a default `foxy-gh-farmer.yaml` in the current directory based on your current chia `config.yaml`
-4. Edit the `foxy-gh-farmer.yaml` to your liking and restart foxy-gh-farmer
-5. Profit!
+1. On Linux ensure you have `libgomp1` as well as `ocl-icd-libopencl1` installed
+2. Clone the git repo and cd into it: `git clone https://github.com/foxypool/foxy-gh-farmer && cd foxy-gh-farmer`
+3. Install the dependencies: `pip install .`
+4. Run using `foxy-gh-farmer`, it will create a default `foxy-gh-farmer.yaml` in the current directory based on your current chia `config.yaml`
+5. Edit the `foxy-gh-farmer.yaml` to your liking and restart foxy-gh-farmer
+6. Profit!
 
 ### Using docker
 
