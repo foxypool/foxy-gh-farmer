@@ -26,7 +26,7 @@ from foxy_gh_farmer.pool.pool_api_client import PoolApiClient, POOL_URL
 @click.command("join-pool", short_help="Join your PlotNFTs to the pool")
 @click.pass_context
 def join_pool_cmd(ctx) -> None:
-    foxy_root: Path = Path(os.path.expanduser(os.getenv("FOXY_GH_ROOT", "~/.foxy-gh-farmer/mainnet"))).resolve()
+    foxy_root: Path = ctx.obj["root_path"]
     if not foxy_root.exists():
         print("No config found, please start foxy-gh-farmer at least once before joining the pool!")
 

@@ -11,8 +11,9 @@ from chia.util.network import is_localhost
 
 
 @click.command("summary", short_help="Summary of farming information")
-def summary_cmd() -> None:
-    foxy_root: Path = Path(os.path.expanduser(os.getenv("FOXY_GH_ROOT", "~/.foxy-gh-farmer/mainnet"))).resolve()
+@click.pass_context
+def summary_cmd(ctx) -> None:
+    foxy_root: Path = ctx.obj["root_path"]
 
     asyncio.run(print_farm_summary(foxy_root))
 
