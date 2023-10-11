@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix https requests on systems with outdated ca stores
+
 ## [1.0.1] - 2023-10-08
 
 ### Fixed

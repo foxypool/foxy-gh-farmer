@@ -3,12 +3,14 @@ from logging import getLogger
 from os.path import expanduser, join
 from pathlib import Path
 from platform import machine
+from ssl import SSLContext
 from sys import platform
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
 
 from aiohttp import ClientSession
-
+from chia.server.server import ssl_context_for_root
+from chia.ssl.create_ssl import get_mozilla_ca_crt
 
 _gigahorse_release = "1.8.2.giga14"
 _gigahorse_github_tag = f"v{_gigahorse_release}"
@@ -19,6 +21,7 @@ _repo_download_url_base = "https://github.com/madMAx43v3r/chia-gigahorse/release
 
 class GigahorseBinaryManager:
     _cache_path: Path = Path(expanduser("~/.foxy-gh-farmer/bin-cache")).resolve()
+    _ssl_context: SSLContext = ssl_context_for_root(get_mozilla_ca_crt())
     _logger = getLogger("binary_manager")
 
     async def get_binary_directory_path(self) -> Path:
@@ -55,7 +58,7 @@ class GigahorseBinaryManager:
     async def _download_release(self, to_path: str):
         chunk_size = 5 * 2**20  # MB
         async with ClientSession() as client:
-            async with client.get(self._get_release_download_url()) as res:
+            async with client.get(self._get_release_download_url(), ssl=self._ssl_context) as res:
                 with open(to_path, 'wb') as fd:
                     async for chunk in res.content.iter_chunked(chunk_size):
                         fd.write(chunk)
