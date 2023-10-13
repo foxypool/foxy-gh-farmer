@@ -30,7 +30,7 @@ Foxy-GH-Farmer is useful in the following scenarios:
 
 ### Using docker
 
-A docker image based on the provided [Dockerfile](https://github.com/foxypool/foxy-gh-farmer/blob/main/Dockerfile) is available via `ghcr.io/foxypool/foxy-gh-farmer:latest`.
+A docker image based on the provided [Dockerfile](https://github.com/foxypool/foxy-gh-farmer/blob/main/Dockerfile) is available via `ghcr.io/foxypool/foxy-gh-farmer:latest` and `foxypool/foxy-gh-farmer:latest`.
 For specific tags see [this list](https://github.com/foxypool/foxy-gh-farmer/pkgs/container/foxy-gh-farmer).
 A [docker-compose.yaml](https://github.com/foxypool/foxy-gh-farmer/blob/main/docker-compose.yaml) example is available as well, to get started.
 
