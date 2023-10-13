@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Support adding your first key via a `CHIA_MNEMONIC` environment variable to simplify docker setups.
+
 ## [1.0.2] - 2023-10-12
 
 ### Fixed
