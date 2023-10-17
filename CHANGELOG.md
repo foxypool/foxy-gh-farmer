@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2023-10-17
+
 ### Added
 
 - Support adding your first key via a `CHIA_MNEMONIC` environment variable to simplify docker setups.
@@ -28,7 +30,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.0.2...HEAD
+[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/foxypool/foxy-gh-farmer/compare/1.0.2...1.1.0
 [1.0.2]: https://github.com/foxypool/foxy-gh-farmer/compare/1.0.1...1.0.2
 [1.0.1]: https://github.com/foxypool/foxy-gh-farmer/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/foxypool/foxy-gh-farmer/releases/tag/1.0.0
