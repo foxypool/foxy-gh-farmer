@@ -6,6 +6,10 @@
 
 - Support adding your first key via a `CHIA_MNEMONIC` environment variable to simplify docker setups.
 
+### Fixed
+
+- Fix `join-pool` command not working properly when another chia wallet is running.
+
 ## [1.0.2] - 2023-10-12
 
 ### Fixed
