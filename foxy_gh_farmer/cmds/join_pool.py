@@ -18,6 +18,7 @@ from chia.util.ints import uint64
 from chia.wallet.util.wallet_types import WalletType
 from yaspin import yaspin
 
+from foxy_gh_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_gh_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_gh_farmer.gigahorse_launcher import create_start_daemon_connection, async_start
 from foxy_gh_farmer.pool.pool_api_client import PoolApiClient, POOL_URL
@@ -27,10 +28,9 @@ from foxy_gh_farmer.pool.pool_api_client import PoolApiClient, POOL_URL
 @click.pass_context
 def join_pool_cmd(ctx) -> None:
     foxy_root: Path = ctx.obj["root_path"]
-    if not foxy_root.exists():
-        print("No config found, please start foxy-gh-farmer at least once before joining the pool!")
-
-        return
+    config_path: Path = ctx.obj["config_path"]
+    foxy_chia_config_manager = FoxyChiaConfigManager(foxy_root)
+    foxy_chia_config_manager.ensure_foxy_config(config_path)
 
     config = load_config(foxy_root, "config.yaml")
     foxy_config_manager = FoxyConfigManager(ctx.obj["config_path"])
