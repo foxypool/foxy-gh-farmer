@@ -13,10 +13,9 @@ from chia.server.server import ssl_context_for_root
 from chia.ssl.create_ssl import get_mozilla_ca_crt
 
 _gigahorse_release = "1.8.2.giga14"
-_gigahorse_github_tag = f"v{_gigahorse_release}"
 _gigahorse_release_archive_base = f"chia-gigahorse-farmer-{_gigahorse_release}"
 _gigahorse_archive_root_dir = "chia-gigahorse-farmer"
-_repo_download_url_base = "https://github.com/madMAx43v3r/chia-gigahorse/releases/download/"
+_download_url_base = "https://downloads.foxypool.io/chia/gigahorse/"
 
 
 class GigahorseBinaryManager:
@@ -64,7 +63,7 @@ class GigahorseBinaryManager:
                         fd.write(chunk)
 
     def _get_release_download_url(self):
-        return f"{_repo_download_url_base}/{_gigahorse_github_tag}/{self._get_archive_file_name()}"
+        return f"{_download_url_base}/{_gigahorse_release}/{self._get_archive_file_name()}"
 
     def _get_archive_file_name(self):
         if platform == "win32":
