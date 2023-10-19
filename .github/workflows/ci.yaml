@@ -114,24 +114,4 @@ jobs:
           artifacts: "foxy-gh-farmer-*.zip"
           name: "Foxy-GH-Farmer v${{ steps.tag.outputs.TAG }}"
           body: ${{ steps.changelog_reader.outputs.changes }}
-      - uses: actions/checkout@v4
-        with:
-          repository: foxypool/downloads
-          lfs: true
-          path: downloads
-          token: ${{ secrets.GH_DEPLOY_TOKEN }}
-      - name: Publish to foxypool/downloads
-        run: |
-          mkdir -p "downloads/chia/foxy-gh-farmer/$TAG"
-          mv foxy-gh-farmer-*.zip "downloads/chia/foxy-gh-farmer/$TAG/"
-          cd downloads/chia/foxy-gh-farmer
-          rm -f latest
-          ln -s "$TAG" latest
-          cd ../../
-          git add chia/foxy-gh-farmer/
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git commit -m "Update foxy-gh-farmer to $TAG"
-          git push origin main
-        env:
-          TAG: ${{ steps.tag.outputs.TAG }}
+
