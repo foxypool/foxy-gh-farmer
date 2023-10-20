@@ -2,6 +2,7 @@ import asyncio
 import functools
 import os
 from asyncio import sleep
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Tuple
 
@@ -16,6 +17,7 @@ from chia.util.byte_types import hexstr_to_bytes
 from chia.util.config import load_config
 from chia.util.ints import uint64
 from chia.wallet.util.wallet_types import WalletType
+from humanize import naturaldelta
 from yaspin import yaspin
 
 from foxy_gh_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
@@ -129,13 +131,28 @@ async def join_plot_nft_to_pool(wallet_client: WalletRpcClient, pool_info: Dict[
 
 
 async def wait_for_wallet_sync(wallet_client: WalletRpcClient):
-    with yaspin(text="Waiting for the wallet to sync ..."):
+    with yaspin(text="Waiting for the wallet to sync ...") as spinner:
+        async def update_spinner_text():
+            connected_full_nodes_count = len(await wallet_client.get_connections(node_type=NodeType.FULL_NODE))
+            wallet_height = await wallet_client.get_height_info()
+            relative_time = "N/A"
+            try:
+                wallet_timestamp = await wallet_client.get_timestamp_for_height(wallet_height)
+                relative_time = naturaldelta(datetime.now() - datetime.fromtimestamp(float(wallet_timestamp)))
+            except:
+                pass
+            spinner.text = f"Waiting for the wallet to sync (peers={connected_full_nodes_count}, height={wallet_height}, {relative_time} behind) ..."
+
         while len(await wallet_client.get_connections(node_type=NodeType.FULL_NODE)) < 2:
+            await update_spinner_text()
             await sleep(5)
+        await update_spinner_text()
         await sleep(10)
         while await wallet_client.get_sync_status():
+            await update_spinner_text()
             await sleep(5)
         while not (await wallet_client.get_synced()):
+            await update_spinner_text()
             await sleep(5)
     print("✅ Wallet synced")
 

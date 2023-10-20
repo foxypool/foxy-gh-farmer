@@ -13,6 +13,7 @@ setup(
         "aioudp==0.1.1",
         "chia-blockchain==1.8.3rc1",
         "click==8.1.3",
+        "humanize==4.8.0",
         "pyparsing==3.1.1",
         "PyYAML==6.0.0",
         "yaspin==3.0.1",

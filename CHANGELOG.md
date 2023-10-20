@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add additional wallet sync info while running `./foxy-gh-farmer join-pool`.
+
 ## [1.1.1] - 2023-10-18
 
 ### Fixed
