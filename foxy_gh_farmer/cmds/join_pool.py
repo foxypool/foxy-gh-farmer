@@ -22,7 +22,8 @@ from yaspin import yaspin
 
 from foxy_gh_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_gh_farmer.foxy_config_manager import FoxyConfigManager
-from foxy_gh_farmer.gigahorse_launcher import create_start_daemon_connection, async_start
+from foxy_gh_farmer.gigahorse_launcher import create_start_daemon_connection, async_start, \
+    ensure_daemon_keyring_is_unlocked
 from foxy_gh_farmer.pool.pool_api_client import PoolApiClient, POOL_URL
 
 
@@ -164,6 +165,7 @@ async def start_wallet(foxy_root: Path, config: Dict[str, Any], foxy_config: Dic
         daemon_proxy = await create_start_daemon_connection(foxy_root, config, foxy_config)
         close_daemon_on_exit = True
     assert daemon_proxy is not None
+    await ensure_daemon_keyring_is_unlocked(daemon_proxy)
 
     await async_start(daemon_proxy, ["wallet"])
 

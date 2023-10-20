@@ -62,6 +62,19 @@ async def launch_start_daemon(root_path: Path, foxy_config: Dict[str, Any]) -> s
     return process
 
 
+async def ensure_daemon_keyring_is_unlocked(daemon_proxy: DaemonProxy):
+    passphrase = None
+    if await daemon_proxy.is_keyring_locked():
+        passphrase = Keychain.get_cached_master_passphrase()
+        if passphrase is None or not Keychain.master_passphrase_is_valid(passphrase):
+            with ThreadPoolExecutor(max_workers=1, thread_name_prefix="get_current_passphrase") as executor:
+                passphrase = await asyncio.get_running_loop().run_in_executor(executor, get_current_passphrase)
+
+    if passphrase:
+        print("Unlocking daemon keyring")
+        await daemon_proxy.unlock_keyring(passphrase)
+
+
 async def create_start_daemon_connection(
     root_path: Path,
     config: Dict[str, Any],
@@ -79,16 +92,7 @@ async def create_start_daemon_connection(
         # it prints "daemon: listening"
         connection = await connect_to_daemon_and_validate(root_path, config)
     if connection:
-        passphrase = None
-        if await connection.is_keyring_locked():
-            passphrase = Keychain.get_cached_master_passphrase()
-            if passphrase is None or not Keychain.master_passphrase_is_valid(passphrase):
-                with ThreadPoolExecutor(max_workers=1, thread_name_prefix="get_current_passphrase") as executor:
-                    passphrase = await asyncio.get_running_loop().run_in_executor(executor, get_current_passphrase)
-
-        if passphrase:
-            print("Unlocking daemon keyring")
-            await connection.unlock_keyring(passphrase)
+        await ensure_daemon_keyring_is_unlocked(connection)
 
         return connection
     return None

@@ -6,6 +6,10 @@
 
 - Add additional wallet sync info while running `./foxy-gh-farmer join-pool`.
 
+### Fixed
+
+- Running `join-pool` with an already started daemon with a locked keyring works correctly now.
+
 ## [1.1.1] - 2023-10-18
 
 ### Fixed
