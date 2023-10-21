@@ -4,6 +4,7 @@
 
 ### Added
 
+- Update gigahorse to 1.8.2.giga20.
 - Add additional wallet sync info while running `./foxy-gh-farmer join-pool`.
 
 ### Fixed

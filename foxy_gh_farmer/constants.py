@@ -1,2 +1,2 @@
 foxy_gigahorse_node_address = "gh-node.chia.foxypool.io"
-foxy_gigahorse_node_port = 18445
+foxy_gigahorse_node_port = 18446
