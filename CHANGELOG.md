@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Update gigahorse to 1.8.2.giga21.
+
 ## [1.2.0] - 2023-10-21
 
 ### Added
