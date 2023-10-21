@@ -9,6 +9,7 @@
 ### Fixed
 
 - Running `join-pool` with an already started daemon with a locked keyring works correctly now.
+- Fix `join-pool` on systems where the wallet startup took longer than 5 seconds.
 
 ## [1.1.1] - 2023-10-18
 
