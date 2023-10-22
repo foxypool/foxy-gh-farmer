@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Update gigahorse to 1.8.2.giga22.
+
 ### Fixed
 
 - Setting an integer value for one of the chiapos environment config options works correctly now.
