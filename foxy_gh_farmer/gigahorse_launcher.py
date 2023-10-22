@@ -23,23 +23,23 @@ async def launch_start_daemon(root_path: Path, foxy_config: Dict[str, Any]) -> s
         elif isinstance(foxy_config["recompute_hosts"], list) and len(foxy_config["recompute_hosts"]) > 0:
             os.environ["CHIAPOS_RECOMPUTE_HOST"] = ",".join(foxy_config["recompute_hosts"])
     if foxy_config.get("recompute_connect_timeout") is not None:
-        os.environ["CHIAPOS_RECOMPUTE_CONNECT_TIMEOUT"] = foxy_config["recompute_connect_timeout"]
+        os.environ["CHIAPOS_RECOMPUTE_CONNECT_TIMEOUT"] = str(foxy_config["recompute_connect_timeout"])
     if foxy_config.get("recompute_retry_interval") is not None:
-        os.environ["CHIAPOS_RECOMPUTE_RETRY_INTERVAL"] = foxy_config["recompute_retry_interval"]
+        os.environ["CHIAPOS_RECOMPUTE_RETRY_INTERVAL"] = str(foxy_config["recompute_retry_interval"])
     if foxy_config.get("chiapos_max_cores") is not None:
-        os.environ["CHIAPOS_MAX_CORES"] = foxy_config["chiapos_max_cores"]
+        os.environ["CHIAPOS_MAX_CORES"] = str(foxy_config["chiapos_max_cores"])
     if foxy_config.get("chiapos_max_cuda_devices") is not None:
-        os.environ["CHIAPOS_MAX_CUDA_DEVICES"] = foxy_config["chiapos_max_cuda_devices"]
+        os.environ["CHIAPOS_MAX_CUDA_DEVICES"] = str(foxy_config["chiapos_max_cuda_devices"])
     if foxy_config.get("chiapos_max_opencl_devices") is not None:
-        os.environ["CHIAPOS_MAX_OPENCL_DEVICES"] = foxy_config["chiapos_max_opencl_devices"]
+        os.environ["CHIAPOS_MAX_OPENCL_DEVICES"] = str(foxy_config["chiapos_max_opencl_devices"])
     if foxy_config.get("chiapos_max_gpu_devices") is not None:
-        os.environ["CHIAPOS_MAX_GPU_DEVICES"] = foxy_config["chiapos_max_gpu_devices"]
+        os.environ["CHIAPOS_MAX_GPU_DEVICES"] = str(foxy_config["chiapos_max_gpu_devices"])
     if foxy_config.get("chiapos_opencl_platform") is not None:
-        os.environ["CHIAPOS_OPENCL_PLATFORM"] = foxy_config["chiapos_opencl_platform"]
+        os.environ["CHIAPOS_OPENCL_PLATFORM"] = str(foxy_config["chiapos_opencl_platform"])
     if foxy_config.get("chiapos_min_gpu_log_entries") is not None:
-        os.environ["CHIAPOS_MIN_GPU_LOG_ENTRIES"] = foxy_config["chiapos_min_gpu_log_entries"]
+        os.environ["CHIAPOS_MIN_GPU_LOG_ENTRIES"] = str(foxy_config["chiapos_min_gpu_log_entries"])
     if foxy_config.get("cuda_visible_devices") is not None:
-        os.environ["CUDA_VISIBLE_DEVICES"] = foxy_config["cuda_visible_devices"]
+        os.environ["CUDA_VISIBLE_DEVICES"] = str(foxy_config["cuda_visible_devices"])
 
     creationflags = 0
     chia_binary_name = "chia.bin"

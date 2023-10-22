@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Setting an integer value for one of the chiapos environment config options works correctly now.
+
 ## [1.2.1] - 2023-10-22
 
 ### Changed
