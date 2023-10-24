@@ -90,7 +90,7 @@ class FoxyChiaConfigManager:
             config_was_updated = True
         if chia_foxy_config["logging"]["log_level"] != foxy_config["log_level"] \
            or chia_foxy_config["logging"]["log_stdout"] is not False \
-           or chia_foxy_config["logging"]["log_syslog"] is not True:
+           or chia_foxy_config["logging"].get("log_syslog") is not True:
             chia_foxy_config["logging"]["log_level"] = foxy_config["log_level"]
             chia_foxy_config["logging"]["log_stdout"] = False
             chia_foxy_config["logging"]["log_syslog"] = True

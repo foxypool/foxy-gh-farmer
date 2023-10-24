@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix a crash when an existing chia config from chia-blockchain 1.1.7 or earlier was used to create the foxy-gh-farmer chia config.
+
 ## [1.2.2] - 2023-10-22
 
 ### Changed
