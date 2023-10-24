@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.2.3] - 2023-10-24
+
 ### Fixed
 
 - Fix a crash when an existing chia config from chia-blockchain 1.1.7 or earlier was used to create the foxy-gh-farmer chia config.
@@ -68,7 +70,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.2.2...HEAD
+[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.2.3...HEAD
+[1.2.3]: https://github.com/foxypool/foxy-gh-farmer/compare/1.2.2...1.2.3
 [1.2.2]: https://github.com/foxypool/foxy-gh-farmer/compare/1.2.1...1.2.2
 [1.2.1]: https://github.com/foxypool/foxy-gh-farmer/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/foxypool/foxy-gh-farmer/compare/1.1.1...1.2.0
