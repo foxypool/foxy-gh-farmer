@@ -90,12 +90,13 @@ class FoxyChiaConfigManager:
             config_was_updated = True
         if chia_foxy_config["logging"]["log_level"] != foxy_config["log_level"] \
            or chia_foxy_config["logging"]["log_stdout"] is not False \
-           or chia_foxy_config["logging"].get("log_syslog") is not True:
+           or chia_foxy_config["logging"].get("log_syslog") is not True \
+           or chia_foxy_config["logging"].get("log_syslog_port") != foxy_config.get("syslog_port", 11514):
             chia_foxy_config["logging"]["log_level"] = foxy_config["log_level"]
             chia_foxy_config["logging"]["log_stdout"] = False
             chia_foxy_config["logging"]["log_syslog"] = True
             chia_foxy_config["logging"]["log_syslog_host"] = "127.0.0.1"
-            chia_foxy_config["logging"]["log_syslog_port"] = 11514
+            chia_foxy_config["logging"]["log_syslog_port"] = foxy_config.get("syslog_port", 11514)
             config_was_updated = True
         if chia_foxy_config["self_hostname"] != foxy_config["listen_host"]:
             chia_foxy_config["self_hostname"] = foxy_config["listen_host"]

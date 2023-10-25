@@ -7,7 +7,6 @@ from foxy_gh_farmer.gigahorse_launcher import create_start_daemon_connection, as
 
 from chia.cmds.keys import keys_cmd
 from chia.cmds.passphrase import passphrase_cmd
-from chia.cmds.plots import plots_cmd
 from chia.daemon.client import DaemonProxy
 
 import asyncio
@@ -150,7 +149,6 @@ def run_cmd(ctx, config):
 cli.add_command(summary_cmd)
 cli.add_command(join_pool_cmd)
 cli.add_command(keys_cmd)
-cli.add_command(plots_cmd)
 cli.add_command(passphrase_cmd)
 
 

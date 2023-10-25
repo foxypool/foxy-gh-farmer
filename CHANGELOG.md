@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add support for configuring a different syslog port, default is `11514`.
+
+### Changed
+
+- Update gigahorse to 2.1.1.giga22.
+
 ## [1.2.3] - 2023-10-24
 
 ### Fixed

@@ -1,13 +1,12 @@
 import asyncio
 import functools
-import os
 from asyncio import sleep
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Tuple
 
 import click
-from chia.cmds.cmds_util import get_any_service_client, get_wallet
+from chia.cmds.cmds_util import get_wallet
 from chia.cmds.plotnft_funcs import submit_tx_with_confirmation
 from chia.daemon.client import connect_to_daemon_and_validate, DaemonProxy
 from chia.rpc.wallet_rpc_client import WalletRpcClient

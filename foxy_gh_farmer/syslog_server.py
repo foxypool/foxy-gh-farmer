@@ -2,7 +2,7 @@ from asyncio import sleep
 from logging import getLogger
 from typing import Dict
 
-from pyparsing import Word, alphas, Suppress, Combine, nums, string, Optional, Regex
+from pyparsing import Word, alphas, Suppress, nums, Regex
 
 import aioudp
 
@@ -64,6 +64,6 @@ async def setup_syslog_server(logging_config: Dict):
                 add_stdout_handler(logger, logging_config=logging_config)
             logger.log(parsed["log_level"], parsed["message"])
 
-    async with aioudp.serve("127.0.0.1", 11514, handler):
+    async with aioudp.serve("127.0.0.1", logging_config["log_syslog_port"], handler):
         while True:
             await sleep(1)
