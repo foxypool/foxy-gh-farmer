@@ -79,10 +79,12 @@ async def create_start_daemon_connection(
     root_path: Path,
     config: Dict[str, Any],
     foxy_config: Dict[str, Any],
+    quiet: bool = False,
 ) -> Optional[DaemonProxy]:
-    connection = await connect_to_daemon_and_validate(root_path, config)
+    connection = await connect_to_daemon_and_validate(root_path, config, quiet=quiet)
     if connection is None:
-        print("Starting daemon")
+        if not quiet:
+            print("Starting daemon")
         # launch a daemon
         process = await launch_start_daemon(root_path, foxy_config)
         # give the daemon a chance to start up
@@ -90,7 +92,7 @@ async def create_start_daemon_connection(
             process.stdout.readline()
         await asyncio.sleep(1)
         # it prints "daemon: listening"
-        connection = await connect_to_daemon_and_validate(root_path, config)
+        connection = await connect_to_daemon_and_validate(root_path, config, quiet=quiet)
     if connection:
         await ensure_daemon_keyring_is_unlocked(connection)
 

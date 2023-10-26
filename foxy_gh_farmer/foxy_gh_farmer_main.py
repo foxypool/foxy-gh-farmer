@@ -1,6 +1,7 @@
 from asyncio import sleep
 from logging import getLogger
 
+from foxy_gh_farmer.cmds.authenticate import authenticate_cmd
 from foxy_gh_farmer.cmds.join_pool import join_pool_cmd
 from foxy_gh_farmer.foxy_gh_farmer_logging import initialize_logging_with_stdout
 from foxy_gh_farmer.gigahorse_launcher import create_start_daemon_connection, async_start
@@ -148,6 +149,7 @@ def run_cmd(ctx, config):
 
 cli.add_command(summary_cmd)
 cli.add_command(join_pool_cmd)
+cli.add_command(authenticate_cmd)
 cli.add_command(keys_cmd)
 cli.add_command(passphrase_cmd)
 
