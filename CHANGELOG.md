@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Update the `./foxy-gh-farmer summary` command to show effective capacity as well.
+
 ## [1.4.0] - 2023-10-26
 
 ### Added
