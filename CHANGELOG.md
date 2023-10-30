@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.4.1] - 2023-10-30
+
 ### Changed
 
 - Update the `./foxy-gh-farmer summary` command to show effective capacity as well.
@@ -95,7 +97,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.4.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.4.1...HEAD
+[1.4.1]: https://github.com/foxypool/foxy-gh-farmer/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/foxypool/foxy-gh-farmer/compare/1.3.0...1.4.0
 [1.3.0]: https://github.com/foxypool/foxy-gh-farmer/compare/1.2.3...1.3.0
 [1.2.3]: https://github.com/foxypool/foxy-gh-farmer/compare/1.2.2...1.2.3
