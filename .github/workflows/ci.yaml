@@ -62,8 +62,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.11" ]
-        os: [ ubuntu-latest, windows-latest ]
+        include:
+          - python-version: "3.11"
+            os: ubuntu-20.04
+            package-suffix: ubuntu
+          - python-version: "3.11"
+            os: windows-latest
+            package-suffix: windows
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -82,7 +87,7 @@ jobs:
       - name: Save release archive
         uses: actions/upload-artifact@v3
         with:
-          name: foxy-gh-farmer-${{ matrix.os }}
+          name: foxy-gh-farmer-${{ matrix.package-suffix }}
           path: dist/*
   publish-release:
     name: Publish release
@@ -98,7 +103,7 @@ jobs:
         uses: actions/download-artifact@v3
       - name: Mark binary as executable
         run: |
-          chmod +x foxy-gh-farmer-ubuntu-latest/foxy-gh-farmer
+          chmod +x foxy-gh-farmer-ubuntu/foxy-gh-farmer
       - name: Create release zip
         run:
           for i in foxy-gh-farmer-*/; do zip -r -j "${i%/}.zip" "$i"; done
