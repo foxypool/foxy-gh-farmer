@@ -5,6 +5,7 @@
 ### Changed
 
 - Update the `./foxy-gh-farmer summary` command to show effective capacity as well.
+- Package ubuntu binaries using ubuntu 20.04 to support older systems.
 
 ### Fixed
 
