@@ -9,6 +9,7 @@ from foxy_gh_farmer.cmds.authenticate import authenticate_cmd
 from foxy_gh_farmer.cmds.join_pool import join_pool_cmd
 from foxy_gh_farmer.foxy_gh_farmer_logging import initialize_logging_with_stdout
 from foxy_gh_farmer.gigahorse_launcher import create_start_daemon_connection, async_start
+from foxy_gh_farmer.util.node_id import calculate_harvester_node_id_slug
 
 from chia.cmds.keys import keys_cmd
 from chia.cmds.passphrase import passphrase_cmd
@@ -68,6 +69,7 @@ class FoxyFarmer:
         services_to_start: List[str] = ["farmer-only"]
         if foxy_config.get("enable_harvester") is True:
             services_to_start.append("harvester")
+            self._logger.info(f"Harvester starting (id={calculate_harvester_node_id_slug(self._foxy_root, config)})")
         await async_start(self._daemon_proxy, services_to_start)
 
         while self._daemon_proxy is not None:

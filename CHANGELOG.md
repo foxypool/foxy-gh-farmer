@@ -5,6 +5,7 @@
 ### Added
 
 - Add sentry error reporting.
+- Print harvester id on startup for easy identification same as Foxy-Farmer.
 
 ## [1.4.2] - 2023-10-31
 
