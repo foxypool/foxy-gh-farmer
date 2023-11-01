@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add sentry error reporting.
+
 ## [1.4.2] - 2023-10-31
 
 ### Fixed

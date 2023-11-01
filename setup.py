@@ -16,6 +16,7 @@ setup(
         "humanize==4.8.0",
         "pyparsing==3.1.1",
         "PyYAML>=6.0.1",
+        "sentry-sdk==1.33.1",
         "yaspin==3.0.1",
     ],
     packages=find_packages(include=["foxy_gh_farmer", "foxy_gh_farmer.*"]),

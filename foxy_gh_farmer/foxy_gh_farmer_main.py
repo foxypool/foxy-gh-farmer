@@ -1,3 +1,7 @@
+from foxy_gh_farmer.error_reporting import init_sentry
+
+init_sentry()
+
 from asyncio import sleep
 from logging import getLogger
 
@@ -20,7 +24,6 @@ from types import FrameType
 from typing import Optional, List
 
 import click
-import pkg_resources
 from chia.server.start_service import async_run
 
 from chia.util.config import load_config
@@ -29,8 +32,7 @@ from foxy_gh_farmer.cmds.farm_summary import summary_cmd
 from foxy_gh_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_gh_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_gh_farmer.syslog_server import setup_syslog_server
-
-version = pkg_resources.require("foxy-gh-farmer")[0].version
+from foxy_gh_farmer.version import version
 
 
 class FoxyFarmer:
