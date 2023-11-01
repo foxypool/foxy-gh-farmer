@@ -4,6 +4,7 @@ init_sentry()
 
 from asyncio import sleep
 from logging import getLogger
+from sentry_sdk.sessions import auto_session_tracking
 
 from foxy_gh_farmer.cmds.authenticate import authenticate_cmd
 from foxy_gh_farmer.cmds.join_pool import join_pool_cmd
@@ -74,8 +75,9 @@ class FoxyFarmer:
             self._logger.info(f"Harvester starting (id={calculate_harvester_node_id_slug(self._foxy_root, config)})")
         await async_start(self._daemon_proxy, services_to_start)
 
-        while self._daemon_proxy is not None:
-            await sleep(1)
+        with auto_session_tracking(session_mode="application"):
+            while self._daemon_proxy is not None:
+                await sleep(1)
         syslog_server.shutdown()
         await syslog_task
         self._is_shut_down = True
