@@ -1,10 +1,9 @@
+import aioudp
+
 from asyncio import sleep
 from logging import getLogger
-from typing import Dict
-
+from typing import Dict, Any
 from pyparsing import Word, alphas, Suppress, nums, Regex
-
-import aioudp
 
 from foxy_gh_farmer.foxy_gh_farmer_logging import add_stdout_handler
 
@@ -52,18 +51,27 @@ class Parser(object):
         }
 
 
-async def setup_syslog_server(logging_config: Dict):
-    parser = Parser()
+class SyslogServer:
+    _parser: Parser = Parser()
+    _logging_config: Dict[str, Any]
+    _is_shut_down: bool = False
 
-    async def handler(connection):
+    def __init__(self, logging_config: Dict[str, Any]):
+        self._logging_config = logging_config
+
+    async def _handle_connection(self, connection):
         async for message in connection:
-            parsed = parser.parse(bytes.decode(message.strip()))
+            parsed = self._parser.parse(bytes.decode(message.strip()))
             logger = getLogger(parsed["service"])
             logger.propagate = False
             if not logger.hasHandlers():
-                add_stdout_handler(logger, logging_config=logging_config)
+                add_stdout_handler(logger, logging_config=self._logging_config)
             logger.log(parsed["log_level"], parsed["message"])
 
-    async with aioudp.serve("127.0.0.1", logging_config["log_syslog_port"], handler):
-        while True:
-            await sleep(1)
+    async def run(self):
+        async with aioudp.serve("127.0.0.1", self._logging_config["log_syslog_port"], self._handle_connection):
+            while self._is_shut_down is False:
+                await sleep(1)
+
+    def shutdown(self):
+        self._is_shut_down = True

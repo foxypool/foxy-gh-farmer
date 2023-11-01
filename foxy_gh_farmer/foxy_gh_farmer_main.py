@@ -32,7 +32,7 @@ from chia.util.config import load_config
 from foxy_gh_farmer.cmds.farm_summary import summary_cmd
 from foxy_gh_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_gh_farmer.foxy_config_manager import FoxyConfigManager
-from foxy_gh_farmer.syslog_server import setup_syslog_server
+from foxy_gh_farmer.syslog_server import SyslogServer
 from foxy_gh_farmer.version import version
 
 
@@ -41,6 +41,7 @@ class FoxyFarmer:
     _config_path: Path
     _logger = getLogger("main")
     _daemon_proxy: Optional[DaemonProxy] = None
+    _is_shut_down: bool = False
 
     def __init__(self, foxy_root: Path, config_path: Path):
         self._foxy_root = foxy_root
@@ -61,7 +62,8 @@ class FoxyFarmer:
         foxy_config_manager = FoxyConfigManager(self._config_path)
         foxy_config = foxy_config_manager.load_config()
 
-        asyncio.create_task(setup_syslog_server(logging_config=config["logging"]))
+        syslog_server = SyslogServer(logging_config=config["logging"])
+        syslog_task = asyncio.create_task(syslog_server.run())
 
         self._daemon_proxy = await create_start_daemon_connection(self._foxy_root, config, foxy_config)
         assert self._daemon_proxy is not None
@@ -74,6 +76,9 @@ class FoxyFarmer:
 
         while self._daemon_proxy is not None:
             await sleep(1)
+        syslog_server.shutdown()
+        await syslog_task
+        self._is_shut_down = True
 
     async def stop(self):
         if self._daemon_proxy is None:
@@ -88,6 +93,8 @@ class FoxyFarmer:
         else:
             print(f"Stop daemon failed {r}")
         self._daemon_proxy = None
+        while self._is_shut_down is False:
+            await sleep(0.1)
 
     def _accept_signal(self, signal_number: int, stack_frame: Optional[FrameType] = None) -> None:
         asyncio.create_task(self.stop())
