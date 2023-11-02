@@ -61,6 +61,22 @@ If you do not have a `.chia_keys` directory from a previous chia install, you ca
 > ```
 > Then you can run `foxy-gh-farmer join-pool` inside the container.
 
+## Updating
+
+### Using the binary
+
+Just download the latest version of the binary [from here](https://github.com/foxypool/foxy-gh-farmer/releases/latest) like you did on install and replace the existing binary, that's it.
+
+### Running from source
+
+1. Open a terminal in the `foxy-gh-farmer` directory which you cloned during install.
+2. Run `git pull`
+3. Run `venv/bin/pip install --upgrade .`
+
+### Using docker
+
+Pull the latest image using `docker pull ghcr.io/foxypool/foxy-gh-farmer:latest` and recreate the container using `docker compose up -d`.
+
 ## Are my keys safe?
 
 Yes, Foxy-GH-Farmer itself is open source. It uses the [Gigahorse Farmer and Harvester](https://github.com/madMAx43v3r/chia-gigahorse) from madMAx43v3r under the hood which is closed source, however. As such the farming topology has not changed, your locally running farmer still signs your blocks, same as when running a local full node. Your keys do not leave your machine.
