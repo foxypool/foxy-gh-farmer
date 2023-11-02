@@ -8,6 +8,10 @@
 - Print harvester id on startup for easy identification same as Foxy-Farmer.
 - Add `plot_nfts` config option to easily deploy new Foxy-GH-Farmers for already joined PlotNFTs.
 
+### Changed
+
+- Update gigahorse to 2.1.1.giga23.
+
 ## [1.4.2] - 2023-10-31
 
 ### Fixed
