@@ -9,8 +9,9 @@ from sentry_sdk.sessions import auto_session_tracking
 from foxy_gh_farmer.cmds.authenticate import authenticate_cmd
 from foxy_gh_farmer.cmds.join_pool import join_pool_cmd
 from foxy_gh_farmer.foxy_gh_farmer_logging import initialize_logging_with_stdout
-from foxy_gh_farmer.gigahorse_launcher import create_start_daemon_connection, async_start
+from foxy_gh_farmer.gigahorse_launcher import ensure_daemon_running_and_unlocked, async_start
 from foxy_gh_farmer.util.node_id import calculate_harvester_node_id_slug
+from foxy_gh_farmer.util.daemon import shutdown_daemon
 
 from chia.cmds.keys import keys_cmd
 from chia.cmds.passphrase import passphrase_cmd
@@ -66,7 +67,7 @@ class FoxyFarmer:
         syslog_server = SyslogServer(logging_config=config["logging"])
         syslog_task = asyncio.create_task(syslog_server.run())
 
-        self._daemon_proxy = await create_start_daemon_connection(self._foxy_root, config, foxy_config)
+        self._daemon_proxy, _ = await ensure_daemon_running_and_unlocked(self._foxy_root, config, foxy_config, quiet=True)
         assert self._daemon_proxy is not None
 
         services_to_start: List[str] = ["farmer-only"]
@@ -86,14 +87,7 @@ class FoxyFarmer:
         if self._daemon_proxy is None:
             return
         self._logger.info("Exiting ...")
-        r = await self._daemon_proxy.exit()
-        await self._daemon_proxy.close()
-        if r.get("data", {}).get("success", False):
-            if r["data"].get("services_stopped") is not None:
-                [print(f"{service}: Stopped") for service in r["data"]["services_stopped"]]
-            print("Daemon stopped")
-        else:
-            print(f"Stop daemon failed {r}")
+        await shutdown_daemon(self._daemon_proxy)
         self._daemon_proxy = None
         while self._is_shut_down is False:
             await sleep(0.1)

@@ -5,7 +5,7 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from os.path import join
 from pathlib import Path
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Tuple
 
 from chia.cmds.passphrase_funcs import get_current_passphrase
 from chia.daemon.client import DaemonProxy, connect_to_daemon_and_validate
@@ -13,6 +13,7 @@ from chia.util.keychain import Keychain
 from chia.util.service_groups import services_for_groups
 
 from foxy_gh_farmer.gigahorse_binary_manager import GigahorseBinaryManager
+from foxy_gh_farmer.util.daemon import shutdown_daemon
 
 
 async def launch_start_daemon(root_path: Path, foxy_config: Dict[str, Any]) -> subprocess.Popen:
@@ -75,29 +76,37 @@ async def ensure_daemon_keyring_is_unlocked(daemon_proxy: DaemonProxy):
         await daemon_proxy.unlock_keyring(passphrase)
 
 
-async def create_start_daemon_connection(
+async def ensure_daemon_running_and_unlocked(
     root_path: Path,
     config: Dict[str, Any],
     foxy_config: Dict[str, Any],
     quiet: bool = False,
-) -> Optional[DaemonProxy]:
-    connection = await connect_to_daemon_and_validate(root_path, config, quiet=quiet)
-    if connection is None:
+) -> Tuple[Optional[DaemonProxy], bool]:
+    did_start_daemon = False
+    daemon_proxy = await connect_to_daemon_and_validate(root_path, config, quiet=True)
+    if daemon_proxy is None:
         if not quiet:
             print("Starting daemon")
         # launch a daemon
         process = await launch_start_daemon(root_path, foxy_config)
+        did_start_daemon = True
         # give the daemon a chance to start up
         if process.stdout:
             process.stdout.readline()
         await asyncio.sleep(1)
         # it prints "daemon: listening"
-        connection = await connect_to_daemon_and_validate(root_path, config, quiet=quiet)
-    if connection:
-        await ensure_daemon_keyring_is_unlocked(connection)
+        daemon_proxy = await connect_to_daemon_and_validate(root_path, config, quiet=quiet)
+    if daemon_proxy:
+        try:
+            await ensure_daemon_keyring_is_unlocked(daemon_proxy)
+        except KeyboardInterrupt:
+            if did_start_daemon:
+                await shutdown_daemon(daemon_proxy, quiet=quiet)
 
-        return connection
-    return None
+            raise
+
+        return daemon_proxy, did_start_daemon
+    return None, did_start_daemon
 
 
 async def async_start(daemon_proxy: DaemonProxy, group: List[str]) -> None:

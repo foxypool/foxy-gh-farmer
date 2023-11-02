@@ -8,7 +8,7 @@ from typing import Dict, Any, List, Tuple, Callable, Awaitable, Optional
 
 import click
 from chia.cmds.cmds_util import get_wallet
-from chia.daemon.client import connect_to_daemon_and_validate, DaemonProxy
+from chia.daemon.client import DaemonProxy
 from chia.rpc.wallet_rpc_client import WalletRpcClient
 from chia.server.outbound_message import NodeType
 from chia.types.blockchain_format.sized_bytes import bytes32
@@ -22,9 +22,10 @@ from yaspin import yaspin
 
 from foxy_gh_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_gh_farmer.foxy_config_manager import FoxyConfigManager
-from foxy_gh_farmer.gigahorse_launcher import create_start_daemon_connection, async_start, \
+from foxy_gh_farmer.gigahorse_launcher import ensure_daemon_running_and_unlocked, async_start, \
     ensure_daemon_keyring_is_unlocked
 from foxy_gh_farmer.pool.pool_api_client import PoolApiClient, POOL_URL
+from foxy_gh_farmer.util.daemon import shutdown_daemon
 from foxy_gh_farmer.util.hex import ensure_hex_prefix
 
 
@@ -123,14 +124,7 @@ async def stop_wallet(daemon_proxy: DaemonProxy, close_daemon: bool):
     await daemon_proxy.stop_service("chia_wallet")
 
     if close_daemon:
-        r = await daemon_proxy.exit()
-        await daemon_proxy.close()
-        if r.get("data", {}).get("success", False):
-            if r["data"].get("services_stopped") is not None:
-                [print(f"{service}: Stopped") for service in r["data"]["services_stopped"]]
-            print("Daemon stopped")
-        else:
-            print(f"Stop daemon failed {r}")
+        await shutdown_daemon(daemon_proxy)
 
 
 async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List[Dict[str, Any]]) -> List[str]:
@@ -213,13 +207,8 @@ async def wait_for_wallet_sync(wallet_client: WalletRpcClient):
 
 
 async def start_wallet(foxy_root: Path, config: Dict[str, Any], foxy_config: Dict[str, Any]) -> Tuple[DaemonProxy, bool]:
-    daemon_proxy = await connect_to_daemon_and_validate(foxy_root, config, quiet=True)
-    close_daemon_on_exit = False
-    if daemon_proxy is None:
-        daemon_proxy = await create_start_daemon_connection(foxy_root, config, foxy_config)
-        close_daemon_on_exit = True
+    daemon_proxy, close_daemon_on_exit = await ensure_daemon_running_and_unlocked(foxy_root, config, foxy_config)
     assert daemon_proxy is not None
-    await ensure_daemon_keyring_is_unlocked(daemon_proxy)
 
     await async_start(daemon_proxy, ["wallet"])
 
