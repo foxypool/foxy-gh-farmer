@@ -66,6 +66,8 @@ class FoxyChiaConfigManager:
             foxy_config_was_updated = True
 
         if foxy_config.get("farmer_reward_address", "") == "" or foxy_config.get("pool_payout_address", "") == "":
+            if foxy_config_was_updated:
+                foxy_config_manager.save_config(foxy_config)
             print(f"You are missing a 'farmer_reward_address' and/or 'pool_payout_address' in {config_path}, please update the config and run again.")
             exit(1)
 
