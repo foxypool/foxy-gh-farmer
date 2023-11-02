@@ -6,6 +6,7 @@
 
 - Add sentry error reporting.
 - Print harvester id on startup for easy identification same as Foxy-Farmer.
+- Add `plot_nfts` config option to easily deploy new Foxy-GH-Farmers for already joined PlotNFTs.
 
 ## [1.4.2] - 2023-10-31
 

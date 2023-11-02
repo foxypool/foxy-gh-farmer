@@ -31,7 +31,7 @@ def authenticate_cmd(ctx) -> None:
     foxy_chia_config_manager.ensure_foxy_config(config_path)
 
     config = load_config(foxy_root, "config.yaml")
-    foxy_config_manager = FoxyConfigManager(ctx.obj["config_path"])
+    foxy_config_manager = FoxyConfigManager(config_path)
     foxy_config = foxy_config_manager.load_config()
 
     asyncio.run(authenticate(foxy_root, config, foxy_config))

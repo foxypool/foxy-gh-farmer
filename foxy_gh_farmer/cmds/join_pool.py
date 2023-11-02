@@ -36,18 +36,17 @@ def join_pool_cmd(ctx) -> None:
     foxy_chia_config_manager = FoxyChiaConfigManager(foxy_root)
     foxy_chia_config_manager.ensure_foxy_config(config_path)
 
-    config = load_config(foxy_root, "config.yaml")
-    foxy_config_manager = FoxyConfigManager(ctx.obj["config_path"])
-    foxy_config = foxy_config_manager.load_config()
-
-    asyncio.run(join_pool(foxy_root, config, foxy_config))
+    asyncio.run(join_pool(foxy_root, config_path))
 
 
 async def join_pool(
     foxy_root: Path,
-    config: Dict[str, Any],
-    foxy_config: Dict[str, Any],
+    config_path: Path,
 ):
+    config = load_config(foxy_root, "config.yaml")
+    foxy_config_manager = FoxyConfigManager(config_path)
+    foxy_config = foxy_config_manager.load_config()
+
     (daemon_proxy, close_daemon_on_exit) = await start_wallet(foxy_root, config, foxy_config)
 
     wallet_rpc = await WalletRpcClient.create(
@@ -74,6 +73,7 @@ async def join_pool(
         await get_wallet(foxy_root, wallet_rpc, fingerprint=None)
 
         await wait_for_wallet_sync(wallet_rpc)
+        update_foxy_config_plot_nfts_if_required(foxy_root, foxy_config, foxy_config_manager)
 
         plot_nfts_not_pooling_with_foxy = get_plot_nft_not_pooling_with_foxy(foxy_root)
         if len(plot_nfts_not_pooling_with_foxy) == 0:
@@ -91,10 +91,22 @@ async def join_pool(
 
         await await_launcher_pool_join_completion(foxy_root, joined_launcher_ids)
         print("✅ Pool join completed")
+        update_foxy_config_plot_nfts_if_required(foxy_root, foxy_config, foxy_config_manager)
     finally:
         wallet_rpc.close()
         await wallet_rpc.await_closed()
         await stop_wallet(daemon_proxy, close_daemon_on_exit)
+
+
+def update_foxy_config_plot_nfts_if_required(foxy_root: Path, foxy_config: Dict[str, Any], foxy_config_manager: FoxyConfigManager):
+    config = load_config(foxy_root, "config.yaml")
+    pool_list: Optional[List[Dict[str, Any]]] = config["pool"].get("pool_list")
+    if pool_list is None:
+        return
+    if pool_list == foxy_config.get("plot_nfts"):
+        return
+    foxy_config["plot_nfts"] = pool_list
+    foxy_config_manager.save_config(foxy_config)
 
 
 async def await_launcher_pool_join_completion(root_path: Path, joined_launcher_ids: List[str]):
