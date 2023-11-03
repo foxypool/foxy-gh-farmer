@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.5.0] - 2023-11-03
+
 ### Added
 
 - Add sentry error reporting.
@@ -117,7 +119,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.4.2...HEAD
+[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.5.0...HEAD
+[1.5.0]: https://github.com/foxypool/foxy-gh-farmer/compare/1.4.2...1.5.0
 [1.4.2]: https://github.com/foxypool/foxy-gh-farmer/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/foxypool/foxy-gh-farmer/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/foxypool/foxy-gh-farmer/compare/1.3.0...1.4.0
