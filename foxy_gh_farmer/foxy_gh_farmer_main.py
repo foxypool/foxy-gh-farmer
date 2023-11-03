@@ -88,6 +88,7 @@ class FoxyFarmer:
             return
         self._logger.info("Exiting ...")
         await shutdown_daemon(self._daemon_proxy)
+        await self._daemon_proxy.close()
         self._daemon_proxy = None
         while self._is_shut_down is False:
             await sleep(0.1)

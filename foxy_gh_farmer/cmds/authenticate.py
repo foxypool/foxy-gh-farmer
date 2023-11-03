@@ -94,3 +94,4 @@ async def authenticate(
             await sleep(0.5)
         if close_daemon_on_exit:
             await shutdown_daemon(daemon_proxy, quiet=True)
+        await daemon_proxy.close()

@@ -22,8 +22,7 @@ from yaspin import yaspin
 
 from foxy_gh_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_gh_farmer.foxy_config_manager import FoxyConfigManager
-from foxy_gh_farmer.gigahorse_launcher import ensure_daemon_running_and_unlocked, async_start, \
-    ensure_daemon_keyring_is_unlocked
+from foxy_gh_farmer.gigahorse_launcher import ensure_daemon_running_and_unlocked, async_start
 from foxy_gh_farmer.pool.pool_api_client import PoolApiClient, POOL_URL
 from foxy_gh_farmer.util.daemon import shutdown_daemon
 from foxy_gh_farmer.util.hex import ensure_hex_prefix
@@ -97,6 +96,7 @@ async def join_pool(
         wallet_rpc.close()
         await wallet_rpc.await_closed()
         await stop_wallet(daemon_proxy, close_daemon_on_exit)
+        await daemon_proxy.close()
 
 
 def update_foxy_config_plot_nfts_if_required(foxy_root: Path, foxy_config: Dict[str, Any], foxy_config_manager: FoxyConfigManager):

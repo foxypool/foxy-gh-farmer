@@ -102,6 +102,7 @@ async def ensure_daemon_running_and_unlocked(
         except KeyboardInterrupt:
             if did_start_daemon:
                 await shutdown_daemon(daemon_proxy, quiet=quiet)
+            await daemon_proxy.close()
 
             raise
 
