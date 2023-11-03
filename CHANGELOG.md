@@ -12,6 +12,10 @@
 
 - Update gigahorse to 2.1.1.giga23.
 
+### Fixed
+
+- Fix the daemon not shutting down when exiting on keyring unlock with a newly started daemon.
+
 ## [1.4.2] - 2023-10-31
 
 ### Fixed
