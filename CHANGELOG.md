@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix crash on startup when using the binary and no `farmer_reward_address` and/or `pool_payout_address` are set.
+
 ## [1.5.0] - 2023-11-03
 
 ### Added
