@@ -1,4 +1,5 @@
 import sentry_sdk
+from sentry_sdk import Hub
 from sentry_sdk.integrations.logging import LoggingIntegration
 
 from foxy_gh_farmer.version import version
@@ -12,3 +13,9 @@ def init_sentry():
             LoggingIntegration(event_level=None),
         ],
     )
+
+
+def close_sentry():
+    client = Hub.current.client
+    if client is not None:
+        client.close(timeout=2.0)

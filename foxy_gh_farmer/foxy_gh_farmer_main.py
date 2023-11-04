@@ -7,6 +7,7 @@ from chia.cmds.passphrase import passphrase_cmd
 from foxy_gh_farmer.cmds.farm_summary import summary_cmd
 from foxy_gh_farmer.cmds.authenticate import authenticate_cmd
 from foxy_gh_farmer.cmds.join_pool import join_pool_cmd
+from foxy_gh_farmer.error_reporting import close_sentry
 from foxy_gh_farmer.util.root_path import get_root_path
 
 
@@ -14,7 +15,10 @@ async def run_foxy_gh_farmer(foxy_root: Path, config_path: Path):
     from foxy_gh_farmer.foxy_gh_farmer_class import FoxyGhFarmer
     foxy_gh_farmer = FoxyGhFarmer(foxy_root, config_path)
     await foxy_gh_farmer.setup_process_global_state()
-    await foxy_gh_farmer.start()
+    try:
+        await foxy_gh_farmer.start()
+    finally:
+        close_sentry()
 
 
 @click.group(
