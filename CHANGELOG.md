@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add plot refresh batch options `plot_refresh_batch_size` and `plot_refresh_batch_sleep_ms`.
+- Add port override config options and `--root-path` command line argument to allow running multiple Foxy-GH-Farmer instances.
+
 ### Fixed
 
 - Fix crash on startup when using the binary and no `farmer_reward_address` and/or `pool_payout_address` are set.

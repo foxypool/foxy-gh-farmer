@@ -1,16 +1,16 @@
 from os import environ
 from pathlib import Path
 from shutil import copyfile
-from typing import Dict, Optional, Tuple
+from typing import Dict, Any
 from sys import exit
 
 from chia.cmds.init_funcs import chia_init, check_keys
 from chia.cmds.keys_funcs import add_private_key_seed
-from chia.util.bech32m import decode_puzzle_hash
 from chia.util.config import load_config, save_config
 from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
 
 from foxy_gh_farmer.constants import foxy_gigahorse_node_address, foxy_gigahorse_node_port
+from foxy_gh_farmer.foundation.config.config_patcher import ConfigPatcher
 from foxy_gh_farmer.foxy_config_manager import FoxyConfigManager
 
 
@@ -72,14 +72,16 @@ class FoxyChiaConfigManager:
             print(f"You are missing a 'farmer_reward_address' and/or 'pool_payout_address' in {config_path}, please update the config and run again.")
             exit(1)
 
-        config_was_updated = self.ensure_different_ports(config, config_was_updated)
-        config_was_updated = self.ensure_foxy_gh_node(config, config_was_updated)
-        config_was_updated, foxy_config_was_updated = self.update_foxy_chia_config_from_foxy_config(
-            chia_foxy_config=config,
-            foxy_config=foxy_config,
-            config_was_updated=config_was_updated,
-            foxy_config_was_updated=foxy_config_was_updated,
+        config_patcher = ConfigPatcher(foxy_farmer_config=foxy_config, chia_config=config)
+        self.patch_configs(
+            config_patcher=config_patcher,
+            chia_config=config,
+            foxy_farmer_config=foxy_config,
         )
+
+        config_patcher_result = config_patcher.get_result()
+        config_was_updated = config_was_updated or config_patcher_result.chia_config_was_updated
+        foxy_config_was_updated = foxy_config_was_updated or config_patcher_result.foxy_farmer_config_was_updated
 
         if foxy_config_was_updated:
             foxy_config_manager.save_config(foxy_config)
@@ -87,107 +89,46 @@ class FoxyChiaConfigManager:
         if config_was_updated:
             save_config(self._root_path, "config.yaml", config)
 
-    def update_foxy_chia_config_from_foxy_config(
+    def patch_configs(
             self,
-            chia_foxy_config: Dict,
-            foxy_config: Dict,
-            config_was_updated: bool = False,
-            foxy_config_was_updated: bool = False,
-    ) -> Tuple[bool, bool]:
-        if "full_node_peer" in chia_foxy_config["wallet"] or "full_node_peers" in chia_foxy_config["wallet"]:
-            chia_foxy_config["wallet"].pop("full_node_peer", None)
-            chia_foxy_config["wallet"].pop("full_node_peers", None)
-            config_was_updated = True
-        if chia_foxy_config["logging"]["log_level"] != foxy_config["log_level"] \
-           or chia_foxy_config["logging"]["log_stdout"] is not False \
-           or chia_foxy_config["logging"].get("log_syslog") is not True \
-           or chia_foxy_config["logging"].get("log_syslog_port") != foxy_config.get("syslog_port", 11514):
-            chia_foxy_config["logging"]["log_level"] = foxy_config["log_level"]
-            chia_foxy_config["logging"]["log_stdout"] = False
-            chia_foxy_config["logging"]["log_syslog"] = True
-            chia_foxy_config["logging"]["log_syslog_host"] = "127.0.0.1"
-            chia_foxy_config["logging"]["log_syslog_port"] = foxy_config.get("syslog_port", 11514)
-            config_was_updated = True
-        if chia_foxy_config["self_hostname"] != foxy_config["listen_host"]:
-            chia_foxy_config["self_hostname"] = foxy_config["listen_host"]
-            config_was_updated = True
-
-        def set_service_option_from_foxy_config(service: str, foxy_config_key: str, chia_config_key: Optional[str] = None):
-            if chia_config_key is None:
-                chia_config_key = foxy_config_key
-
-            nonlocal config_was_updated
-            if foxy_config.get(foxy_config_key) is not None and chia_foxy_config[service].get(chia_config_key) != foxy_config[foxy_config_key]:
-                chia_foxy_config[service][chia_config_key] = foxy_config[foxy_config_key]
-                config_was_updated = True
-
-        set_service_option_from_foxy_config("harvester", foxy_config_key="harvester_num_threads", chia_config_key="num_threads")
-        set_service_option_from_foxy_config("harvester", "plot_directories")
-        set_service_option_from_foxy_config("harvester", "recursive_plot_scan")
-        if chia_foxy_config["harvester"].get("plots_refresh_parameter") is not None and chia_foxy_config["harvester"]["plots_refresh_parameter"]["interval_seconds"] != foxy_config["plot_refresh_interval_seconds"]:
-            chia_foxy_config["harvester"]["plots_refresh_parameter"]["interval_seconds"] = foxy_config["plot_refresh_interval_seconds"]
-            config_was_updated = True
-
-        set_service_option_from_foxy_config("farmer", foxy_config_key="farmer_reward_address", chia_config_key="xch_target_address")
-
-        # Ensure all PlotNFTs use the same payout address
-        pool_payout_address_ph = decode_puzzle_hash(foxy_config["pool_payout_address"]).hex()
-        if foxy_config.get("plot_nfts") is not None:
-            for pool in foxy_config["plot_nfts"]:
-                if pool["payout_instructions"] != pool_payout_address_ph:
-                    pool["payout_instructions"] = pool_payout_address_ph
-                    foxy_config_was_updated = True
-
-        set_service_option_from_foxy_config("pool", foxy_config_key="plot_nfts", chia_config_key="pool_list")
-
-        if chia_foxy_config["pool"].get("pool_list") is not None:
-            for pool in chia_foxy_config["pool"]["pool_list"]:
-                if pool["payout_instructions"] != pool_payout_address_ph:
-                    pool["payout_instructions"] = pool_payout_address_ph
-                    config_was_updated = True
-
-        # Ensure the og reward address is the farmer reward address
-        set_service_option_from_foxy_config("pool", foxy_config_key="farmer_reward_address", chia_config_key="xch_target_address")
-
-        # Ensure the wallet syncs with unknown peers
-        if chia_foxy_config["wallet"].get("connect_to_unknown_peers") is not True:
-            chia_foxy_config["wallet"]["connect_to_unknown_peers"] = True
-            config_was_updated = True
-
-        return config_was_updated, foxy_config_was_updated
-
-    def ensure_foxy_gh_node(self, config: Dict, config_was_updated: bool = False):
-        if config["farmer"]["full_node_peer"]["host"] != foxy_gigahorse_node_address or config["farmer"]["full_node_peer"]["port"] != foxy_gigahorse_node_port:
-            config["farmer"]["full_node_peer"]["host"] = foxy_gigahorse_node_address
-            config["farmer"]["full_node_peer"]["port"] = foxy_gigahorse_node_port
-            config_was_updated = True
-
-        return config_was_updated
-
-    def ensure_different_ports(self, config: Dict, config_was_updated: bool = False):
-        if config["daemon_port"] != 55470:
-            config["daemon_port"] = 55470
-            config_was_updated = True
-        if config["farmer"]["harvester_peer"]["port"] != 28448:
-            config["farmer"]["harvester_peer"]["port"] = 28448
-            config_was_updated = True
-        if config["farmer"]["port"] != 28447:
-            config["farmer"]["port"] = 28447
-            config_was_updated = True
-        if config["farmer"]["rpc_port"] != 28559:
-            config["farmer"]["rpc_port"] = 28559
-            config_was_updated = True
-        if config["harvester"]["farmer_peer"]["port"] != 28447:
-            config["harvester"]["farmer_peer"]["port"] = 28447
-            config_was_updated = True
-        if config["harvester"]["port"] != 28448:
-            config["harvester"]["port"] = 28448
-            config_was_updated = True
-        if config["harvester"]["rpc_port"] != 28560:
-            config["harvester"]["rpc_port"] = 28560
-            config_was_updated = True
-        if config["wallet"]["rpc_port"] != 29256:
-            config["wallet"]["rpc_port"] = 29256
-            config_was_updated = True
-
-        return config_was_updated
+            config_patcher: ConfigPatcher,
+            chia_config: Dict[str, Any],
+            foxy_farmer_config: Dict[str, Any],
+    ):
+        (config_patcher
+         # Ensure different ports
+         .patch_value("daemon_port", foxy_farmer_config.get("chia_daemon_port", 55470))
+         .patch_value("farmer.port", foxy_farmer_config.get("chia_farmer_port", 28447))
+         .patch_value("farmer.rpc_port", foxy_farmer_config.get("chia_farmer_rpc_port", 28559))
+         # Deprecated: harvester port can be dropped with the next chia release
+         .patch_value("harvester.port", foxy_farmer_config.get("chia_harvester_port", 28448))
+         .patch_value("harvester.rpc_port", foxy_farmer_config.get("chia_harvester_rpc_port", 28560))
+         .patch_value("wallet.rpc_port", foxy_farmer_config.get("chia_wallet_rpc_port", 29256))
+         # Ensure we connect to the foxy gigahorse node
+         # Deprecated: Update syntax on next release for list of peers
+         .patch_value("farmer.full_node_peer.host", foxy_gigahorse_node_address)
+         .patch_value("farmer.full_node_peer.port", foxy_gigahorse_node_port)
+         # Ensure the wallet does not try to connect to localhost
+         .remove_config_key("wallet.full_node_peer")
+         .remove_config_key("wallet.full_node_peers")
+         # Sync logging
+         .patch("log_level", "logging.log_level")
+         .patch_value("logging.log_stdout", False)
+         .patch_value("logging.log_syslog", True)
+         .patch_value("logging.log_syslog_host", "127.0.0.1")
+         .patch_value("logging.log_syslog_port", foxy_farmer_config.get("syslog_port", 11514))
+         .patch("listen_host", "self_hostname")
+         # Sync harvester
+         .patch("harvester_num_threads", "harvester.num_threads")
+         .patch("plot_directories", "harvester.plot_directories")
+         .patch("recursive_plot_scan", "harvester.recursive_plot_scan")
+         .patch("plot_refresh_interval_seconds", "harvester.plots_refresh_parameter.interval_seconds")
+         .patch("plot_refresh_batch_size", "harvester.plots_refresh_parameter.batch_size")
+         .patch("plot_refresh_batch_sleep_ms", "harvester.plots_refresh_parameter.batch_sleep_milliseconds")
+         # Sync reward and payout addresses
+         .patch("farmer_reward_address", "farmer.xch_target_address")
+         .patch("farmer_reward_address", "pool.xch_target_address")
+         .sync_pool_payout_address()
+         # Ensure the wallet syncs with unknown peers
+         .patch_value("wallet.connect_to_unknown_peers", True)
+         )

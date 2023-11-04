@@ -1,18 +1,18 @@
-import logging
+from logging import Logger, StreamHandler, getLogger
 from pathlib import Path
 from typing import Dict
 
-import colorlog
 from chia.util.chia_logging import initialize_logging, default_log_level
+from colorlog import ColoredFormatter
 
 
-def add_stdout_handler(logger: logging.Logger, logging_config: Dict):
+def add_stdout_handler(logger: Logger, logging_config: Dict):
     service_name = "foxy_gh_farmer"
     file_name_length = 33 - len(service_name)
     log_date_format = "%Y-%m-%dT%H:%M:%S"
-    stdout_handler = colorlog.StreamHandler()
+    stdout_handler = StreamHandler()
     stdout_handler.setFormatter(
-        colorlog.ColoredFormatter(
+        ColoredFormatter(
             f"%(asctime)s.%(msecs)03d {service_name} %(name)-{file_name_length}s: "
             f"%(log_color)s%(levelname)-8s%(reset)s %(message)s",
             datefmt=log_date_format,
@@ -43,5 +43,5 @@ def initialize_logging_with_stdout(logging_config: Dict, root_path: Path):
         root_path=root_path,
     )
 
-    root_logger = logging.getLogger()
+    root_logger = getLogger()
     add_stdout_handler(root_logger, logging_config=logging_config)

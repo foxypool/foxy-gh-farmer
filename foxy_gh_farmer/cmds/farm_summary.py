@@ -1,4 +1,4 @@
-import asyncio
+from asyncio import run
 from pathlib import Path
 from typing import Dict, Any
 
@@ -13,7 +13,7 @@ from chia.util.network import is_localhost
 def summary_cmd(ctx) -> None:
     foxy_root: Path = ctx.obj["root_path"]
 
-    asyncio.run(print_farm_summary(foxy_root))
+    run(print_farm_summary(foxy_root))
 
 
 async def print_farm_summary(root_path: Path):

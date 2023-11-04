@@ -1,23 +1,16 @@
-import asyncio
-from asyncio import sleep
+from asyncio import sleep, run
 from logging import getLogger
 from pathlib import Path
 from typing import Dict, Any, Optional
 
 import click
-from blspy import G1Element, G2Element, AugSchemeMPL
 from chia.daemon.keychain_proxy import connect_to_keychain_and_validate, KeychainProxy
-from chia.protocols.pool_protocol import get_current_authentication_token, AuthenticationPayload
-from chia.types.blockchain_format.sized_bytes import bytes32
-from chia.util.byte_types import hexstr_to_bytes
 from chia.util.config import load_config
-from chia.util.hash import std_hash
-from chia.wallet.derive_keys import find_authentication_sk
 
+from foxy_gh_farmer.foundation.keychain.generate_login_links import generate_login_links
 from foxy_gh_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_gh_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_gh_farmer.gigahorse_launcher import ensure_daemon_running_and_unlocked
-from foxy_gh_farmer.pool.pool_api_client import PoolApiClient
 from foxy_gh_farmer.util.daemon import shutdown_daemon
 
 
@@ -33,7 +26,7 @@ def authenticate_cmd(ctx) -> None:
     foxy_config_manager = FoxyConfigManager(config_path)
     foxy_config = foxy_config_manager.load_config()
 
-    asyncio.run(authenticate(foxy_root, config, foxy_config))
+    run(authenticate(foxy_root, config, foxy_config))
 
 
 async def authenticate(
@@ -55,36 +48,8 @@ async def authenticate(
     try:
         keychain_proxy = await connect_to_keychain_and_validate(foxy_root, logger)
         assert keychain_proxy is not None
-        all_root_sks = [sk for sk, _ in await keychain_proxy.get_all_private_keys()]
-
-        for pool in pool_list:
-            launcher_id = pool["launcher_id"]
-            if pool.get("pool_url", "") == "":
-                # Skip solo PlotNFT
-                continue
-
-            owner_public_key = G1Element.from_bytes(hexstr_to_bytes(pool["owner_public_key"]))
-            authentication_sk = find_authentication_sk(all_root_sks, owner_public_key)
-            if authentication_sk is None:
-                print(f"The key for Launcher Id {launcher_id} does not seem to be added to this system yet, skipping ...")
-
-                continue
-            pool_url = pool["pool_url"]
-            pool_api_client = PoolApiClient(pool_url=pool_url)
-            pool_info = await pool_api_client.get_pool_info()
-            authentication_token_timeout = pool_info["authentication_token_timeout"]
-            authentication_token = get_current_authentication_token(authentication_token_timeout)
-            message: bytes32 = std_hash(
-                AuthenticationPayload(
-                    "get_login",
-                    bytes32.from_hexstr(launcher_id),
-                    bytes32.from_hexstr(pool["target_puzzle_hash"]),
-                    authentication_token,
-                )
-            )
-            signature: G2Element = AugSchemeMPL.sign(authentication_sk, message)
-            login_link = f"{pool_url}/login?launcher_id={launcher_id}&authentication_token={authentication_token}&signature={bytes(signature).hex()}"
-
+        login_links = await generate_login_links(keychain_proxy, pool_list)
+        for launcher_id, login_link in login_links:
             print()
             print(f"Launcher Id: {launcher_id}")
             print(f" Login Link: {login_link}")
