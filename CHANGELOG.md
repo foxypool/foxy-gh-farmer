@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.6.0] - 2023-11-05
+
 ### Added
 
 - Add plot refresh batch options `plot_refresh_batch_size` and `plot_refresh_batch_sleep_ms`.
@@ -129,7 +131,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.5.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.6.0...HEAD
+[1.6.0]: https://github.com/foxypool/foxy-gh-farmer/compare/1.5.0...1.6.0
 [1.5.0]: https://github.com/foxypool/foxy-gh-farmer/compare/1.4.2...1.5.0
 [1.4.2]: https://github.com/foxypool/foxy-gh-farmer/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/foxypool/foxy-gh-farmer/compare/1.4.0...1.4.1
