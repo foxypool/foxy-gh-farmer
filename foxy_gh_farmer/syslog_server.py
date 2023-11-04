@@ -35,7 +35,7 @@ class Parser(object):
         hostname = Word(alphas + nums + "_" + "-" + ".")
 
         # message
-        message = Regex(".*")
+        message = Regex("(.|\n)*\x00")
 
         # pattern build
         self.__pattern = priority + hostname + message

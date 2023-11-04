@@ -10,6 +10,7 @@
 ### Fixed
 
 - Fix crash on startup when using the binary and no `farmer_reward_address` and/or `pool_payout_address` are set.
+- Fix parsing of multiline syslog messages.
 
 ## [1.5.0] - 2023-11-03
 
