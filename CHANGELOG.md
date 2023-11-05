@@ -9,6 +9,7 @@
 ### Fixed
 
 - Fix a crash when the daemon startup takes a long time.
+- Fix harvester not connecting to the farmer on new installs.
 
 ## [1.6.0] - 2023-11-05
 
