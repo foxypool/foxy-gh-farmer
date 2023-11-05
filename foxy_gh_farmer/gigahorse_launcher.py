@@ -1,17 +1,14 @@
-import asyncio
 import os
 import subprocess
 import sys
-from concurrent.futures import ThreadPoolExecutor
 from os.path import join
 from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple
 
-from chia.cmds.passphrase_funcs import get_current_passphrase
 from chia.daemon.client import DaemonProxy, connect_to_daemon_and_validate
-from chia.util.keychain import Keychain
 from chia.util.service_groups import services_for_groups
 
+from foxy_gh_farmer.foundation.daemon.daemon_proxy import ensure_daemon_keyring_is_unlocked, get_daemon_proxy
 from foxy_gh_farmer.gigahorse_binary_manager import GigahorseBinaryManager
 from foxy_gh_farmer.util.daemon import shutdown_daemon
 
@@ -63,19 +60,6 @@ async def launch_start_daemon(root_path: Path, foxy_config: Dict[str, Any]) -> s
     return process
 
 
-async def ensure_daemon_keyring_is_unlocked(daemon_proxy: DaemonProxy):
-    passphrase = None
-    if await daemon_proxy.is_keyring_locked():
-        passphrase = Keychain.get_cached_master_passphrase()
-        if passphrase is None or not Keychain.master_passphrase_is_valid(passphrase):
-            with ThreadPoolExecutor(max_workers=1, thread_name_prefix="get_current_passphrase") as executor:
-                passphrase = await asyncio.get_running_loop().run_in_executor(executor, get_current_passphrase)
-
-    if passphrase:
-        print("Unlocking daemon keyring")
-        await daemon_proxy.unlock_keyring(passphrase)
-
-
 async def ensure_daemon_running_and_unlocked(
     root_path: Path,
     config: Dict[str, Any],
@@ -90,12 +74,9 @@ async def ensure_daemon_running_and_unlocked(
         # launch a daemon
         process = await launch_start_daemon(root_path, foxy_config)
         did_start_daemon = True
-        # give the daemon a chance to start up
         if process.stdout:
             process.stdout.readline()
-        await asyncio.sleep(1)
-        # it prints "daemon: listening"
-        daemon_proxy = await connect_to_daemon_and_validate(root_path, config, quiet=quiet)
+        daemon_proxy = await get_daemon_proxy(root_path, config)
     if daemon_proxy:
         try:
             await ensure_daemon_keyring_is_unlocked(daemon_proxy)

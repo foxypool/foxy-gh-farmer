@@ -4,7 +4,11 @@
 
 ### Changed
 
-- Show a more helpful error message when the `foxy-gh-farmer.yaml` is not formatted correctly and can not be parsed.  
+- Show a more helpful error message when the `foxy-gh-farmer.yaml` is not formatted correctly and can not be parsed.
+
+### Fixed
+
+- Fix a crash when the daemon startup takes a long time.
 
 ## [1.6.0] - 2023-11-05
 
