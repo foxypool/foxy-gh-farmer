@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add new `init` command to ensure configurations and the gigahorse binary are available without running the farmer.
+
 ## [1.6.1] - 2023-11-05
 
 ### Changed
