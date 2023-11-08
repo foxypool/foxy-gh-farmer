@@ -10,6 +10,7 @@ from foxy_gh_farmer.cmds.init import init_cmd
 from foxy_gh_farmer.cmds.join_pool import join_pool_cmd
 from foxy_gh_farmer.error_reporting import close_sentry
 from foxy_gh_farmer.util.root_path import get_root_path
+from foxy_gh_farmer.version import version
 
 
 async def run_foxy_gh_farmer(foxy_root: Path, config_path: Path):
@@ -23,6 +24,7 @@ async def run_foxy_gh_farmer(foxy_root: Path, config_path: Path):
 
 
 @click.group(
+    help=f"\n======= Foxy-GH-Farmer {version} =======\n",
     invoke_without_command=True,
     context_settings=dict(help_option_names=["-h", "--help"])
 )
@@ -42,6 +44,7 @@ async def run_foxy_gh_farmer(foxy_root: Path, config_path: Path):
     type=click.Path(),
     show_default=True
 )
+@click.version_option(version=version, message="Foxy-GH-Farmer %(version)s")
 @click.pass_context
 def cli(ctx, config, root_path):
     ctx.ensure_object(dict)
