@@ -95,6 +95,8 @@ def update_foxy_config_plot_nfts_if_required(foxy_root: Path, foxy_config: Dict[
     pool_list: Optional[List[Dict[str, Any]]] = config["pool"].get("pool_list")
     if pool_list is None:
         return
+    for pool in pool_list:
+        ensure_foxy_gh_farmer_client_path_removed_in_pool_url(pool)
     if pool_list == foxy_config.get("plot_nfts"):
         return
     foxy_config["plot_nfts"] = pool_list
@@ -115,3 +117,17 @@ async def start_wallet(foxy_root: Path, config: Dict[str, Any], foxy_config: Dic
     await async_start(daemon_proxy, ["wallet"])
 
     return daemon_proxy, close_daemon_on_exit
+
+
+def ensure_foxy_gh_farmer_client_path_removed_in_pool_url(pool: Dict[str, Any]) -> bool:
+    pool_url: str = pool["pool_url"]
+    if "foxypool.io" not in pool_url:
+        return False
+    url_parts = pool_url.split("/")
+    if len(url_parts) != 4:
+        return False
+    url_parts.pop()
+    new_pool_url = "/".join(url_parts)
+    pool["pool_url"] = new_pool_url
+
+    return True

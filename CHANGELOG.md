@@ -6,6 +6,7 @@
 
 - Add new `init` command to ensure configurations and the gigahorse binary are available without running the farmer.
 - Add support for `--version` argument to print the version and exit.
+- Add support for the pool to show the Foxy-GH-Farmer version.
 
 ## [1.6.1] - 2023-11-05
 

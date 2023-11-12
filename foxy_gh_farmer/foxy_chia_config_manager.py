@@ -12,6 +12,7 @@ from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
 from foxy_gh_farmer.constants import foxy_gigahorse_node_address, foxy_gigahorse_node_port
 from foxy_gh_farmer.foundation.config.config_patcher import ConfigPatcher
 from foxy_gh_farmer.foxy_config_manager import FoxyConfigManager
+from foxy_gh_farmer.version import version
 
 
 class FoxyChiaConfigManager:
@@ -131,6 +132,27 @@ class FoxyChiaConfigManager:
          .patch("farmer_reward_address", "farmer.xch_target_address")
          .patch("farmer_reward_address", "pool.xch_target_address")
          .sync_pool_payout_address()
+         .patch_pool_list_closure(ensure_foxy_gh_farmer_client_path_in_pool_url)
          # Ensure the wallet syncs with unknown peers
          .patch_value("wallet.connect_to_unknown_peers", True)
          )
+
+
+def ensure_foxy_gh_farmer_client_path_in_pool_url(pool: Dict[str, Any]) -> bool:
+    pool_url: str = pool["pool_url"]
+    if "foxypool.io" not in pool_url:
+        return False
+    url_parts = pool_url.split("/")
+
+    client_path = f"foxy-gh-farmer-{version}"
+    if len(url_parts) == 3:
+        url_parts.append(client_path)
+    elif url_parts[-1] != client_path:
+        url_parts[-1] = client_path
+    new_pool_url = "/".join(url_parts)
+    if pool_url != new_pool_url:
+        pool["pool_url"] = new_pool_url
+
+        return True
+
+    return False
