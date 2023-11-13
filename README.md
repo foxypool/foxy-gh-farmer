@@ -1,7 +1,7 @@
 Foxy-GH-Farmer
 ======
 
-Foxy-GH-Farmer is a simplified Gigahorse farmer for the chia blockchain using the Foxy-Pool Gigahorse node to farm without a full node running on your machine.
+Foxy-GH-Farmer is a simplified Gigahorse farmer for the chia blockchain using the Foxy-Pool Gigahorse Farming Gateway to farm without a full node running on your machine.
 
 > **Note**:
 > If you can run a full node, you should!

@@ -25,7 +25,7 @@ setup(
     license='GPLv3',
     author='Felix Brucker',
     author_email='contact@foxypool.io',
-    description='A simplified Gigahorse farmer for the Chia blockchain using the Foxy Gigahorse Node.',
+    description='A simplified Gigahorse farmer for the Chia blockchain using the Foxy Gigahorse Farming Gateway.',
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     install_requires=dependencies,
