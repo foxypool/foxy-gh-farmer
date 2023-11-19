@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.7.1] - 2023-11-19
+
 ### Changed
 
 - Update gigahorse to 2.1.1.giga24.
@@ -154,7 +156,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.7.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.7.1...HEAD
+[1.7.1]: https://github.com/foxypool/foxy-gh-farmer/compare/1.7.0...1.7.1
 [1.7.0]: https://github.com/foxypool/foxy-gh-farmer/compare/1.6.1...1.7.0
 [1.6.1]: https://github.com/foxypool/foxy-gh-farmer/compare/1.6.0...1.6.1
 [1.6.0]: https://github.com/foxypool/foxy-gh-farmer/compare/1.5.0...1.6.0
