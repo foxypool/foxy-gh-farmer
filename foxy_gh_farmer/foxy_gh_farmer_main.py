@@ -56,7 +56,7 @@ def cli(ctx, config, root_path):
 
 @cli.command("run", short_help="Run foxy-gh-farmer, can be omitted")
 @click.pass_context
-def run_cmd(ctx, config, root_path):
+def run_cmd(ctx, config = None, root_path = None):
     from chia.server.start_service import async_run
     async_run(run_foxy_gh_farmer(ctx.obj["root_path"], ctx.obj["config_path"]))
 
