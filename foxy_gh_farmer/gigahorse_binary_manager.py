@@ -12,7 +12,7 @@ from aiohttp import ClientSession
 from chia.server.server import ssl_context_for_root
 from chia.ssl.create_ssl import get_mozilla_ca_crt
 
-_gigahorse_release = "2.1.1.giga24"
+_gigahorse_release = "2.1.1.giga25"
 _gigahorse_release_archive_base = f"chia-gigahorse-farmer-{_gigahorse_release}"
 _gigahorse_archive_root_dir = "chia-gigahorse-farmer"
 _download_url_base = "https://downloads.foxypool.io/chia/gigahorse"
