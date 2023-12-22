@@ -5,6 +5,7 @@
 ### Added
 
 - Show connection infos in `summary` command.
+- Show gigahorse download progress.
 
 ### Changed
 
