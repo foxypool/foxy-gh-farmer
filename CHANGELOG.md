@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Show connection infos in `summary` command.
+
 ### Changed
 
 - Update gigahorse to 2.1.3.giga26.
