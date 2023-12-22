@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.8.0] - 2023-12-22
+
 ### Added
 
 - Show connection infos in `summary` command.
@@ -171,7 +173,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.7.2...HEAD
+[unreleased]: https://github.com/foxypool/foxy-gh-farmer/compare/1.8.0...HEAD
+[1.8.0]: https://github.com/foxypool/foxy-gh-farmer/compare/1.7.2...1.8.0
 [1.7.2]: https://github.com/foxypool/foxy-gh-farmer/compare/1.7.1...1.7.2
 [1.7.1]: https://github.com/foxypool/foxy-gh-farmer/compare/1.7.0...1.7.1
 [1.7.0]: https://github.com/foxypool/foxy-gh-farmer/compare/1.6.1...1.7.0
