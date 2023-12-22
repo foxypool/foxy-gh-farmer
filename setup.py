@@ -6,7 +6,7 @@ dependencies = [
     "aiohttp>=3.8.5",
     "aioudp==0.1.1",
     "blspy>=2.0.2",
-    "chia-blockchain==2.1.1",
+    "chia-blockchain==2.1.3",
     "click>=8.1.3",
     "colorlog>=6.7.0",
     "humanize==4.8.0",

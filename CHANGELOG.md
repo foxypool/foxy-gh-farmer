@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Update gigahorse to 2.1.3.giga26.
+
 ## [1.7.2] - 2023-11-23
 
 ### Changed

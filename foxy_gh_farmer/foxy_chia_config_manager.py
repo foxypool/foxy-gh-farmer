@@ -9,7 +9,8 @@ from chia.cmds.keys_funcs import add_private_key_seed
 from chia.util.config import load_config, save_config
 from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
 
-from foxy_gh_farmer.constants import foxy_gigahorse_farming_gateway_address, foxy_gigahorse_farming_gateway_port
+from foxy_gh_farmer.constants import foxy_gigahorse_farming_gateway_port, eu1_foxy_gigahorse_farming_gateway_address, \
+    eu3_foxy_gigahorse_farming_gateway_address
 from foxy_gh_farmer.foundation.config.config_patcher import ConfigPatcher
 from foxy_gh_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_gh_farmer.version import version
@@ -101,16 +102,22 @@ class FoxyChiaConfigManager:
          .patch_value("daemon_port", foxy_farmer_config.get("chia_daemon_port", 55470))
          .patch_value("farmer.port", foxy_farmer_config.get("chia_farmer_port", 28447))
          .patch_value("farmer.rpc_port", foxy_farmer_config.get("chia_farmer_rpc_port", 28559))
-         # Deprecated: update to use new peer setter func with the next chia release
-         .patch_value("harvester.farmer_peer.port", foxy_farmer_config.get("chia_farmer_port", 28447))
-         # Deprecated: harvester port can be dropped with the next chia release
-         .patch_value("harvester.port", foxy_farmer_config.get("chia_harvester_port", 28448))
+         .remove_config_key("harvester.farmer_peer")
+         .patch_value("harvester.farmer_peers", [{
+             "host": foxy_farmer_config.get("listen_host"),
+             "port": foxy_farmer_config.get("chia_farmer_port", 28447),
+         }])
          .patch_value("harvester.rpc_port", foxy_farmer_config.get("chia_harvester_rpc_port", 28560))
          .patch_value("wallet.rpc_port", foxy_farmer_config.get("chia_wallet_rpc_port", 29256))
-         # Ensure we connect to the foxy gigahorse farming gateway
-         # Deprecated: Update syntax on next release for list of peers
-         .patch_value("farmer.full_node_peer.host", foxy_gigahorse_farming_gateway_address)
-         .patch_value("farmer.full_node_peer.port", foxy_gigahorse_farming_gateway_port)
+         # Ensure we connect to the gh farming gateway
+         .remove_config_key("farmer.full_node_peer")
+         .patch_value("farmer.full_node_peers", [{
+             "host": eu1_foxy_gigahorse_farming_gateway_address,
+             "port": foxy_gigahorse_farming_gateway_port,
+         }, {
+             "host": eu3_foxy_gigahorse_farming_gateway_address,
+             "port": foxy_gigahorse_farming_gateway_port,
+         }])
          # Ensure the wallet does not try to connect to localhost
          .remove_config_key("wallet.full_node_peer")
          .remove_config_key("wallet.full_node_peers")
