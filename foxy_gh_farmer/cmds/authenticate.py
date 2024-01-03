@@ -35,7 +35,7 @@ async def authenticate(
     foxy_config: Dict[str, Any],
 ):
     pool_list = config["pool"].get("pool_list", [])
-    if len(pool_list) == 0:
+    if pool_list is None or len(pool_list) == 0:
         print("No PlotNFTs found in your config, did you join the pool via the join-pool command yet?")
 
         return
