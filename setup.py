@@ -20,7 +20,7 @@ if platform == "win32" or platform == "cygwin":
 
 setup(
     name='foxy-gh-farmer',
-    version='1.8.0',
+    version='1.9.0',
     url='https://foxypool.io',
     license='GPLv3',
     author='Felix Brucker',
