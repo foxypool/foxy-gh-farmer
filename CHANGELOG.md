@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add `--fee` option to `join-pool` command.
+
 ## [1.8.0] - 2023-12-22
 
 ### Added

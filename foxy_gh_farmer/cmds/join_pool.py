@@ -1,13 +1,15 @@
 from asyncio import sleep, run
+from decimal import Decimal
 from pathlib import Path
 from typing import Dict, Any, List, Tuple, Optional
 
 import click
-from chia.cmds.cmds_util import get_wallet
+from chia.cmds.cmds_util import get_wallet, cli_confirm
+from chia.cmds.units import units
 from chia.daemon.client import DaemonProxy
 from chia.rpc.wallet_rpc_client import WalletRpcClient
 from chia.util.config import load_config
-from chia.util.ints import uint16
+from chia.util.ints import uint16, uint64
 from yaspin import yaspin
 
 from foxy_gh_farmer.foundation.wallet.pool_join import get_plot_nft_not_pooling_with_foxy, join_plot_nfts_to_pool, \
@@ -20,19 +22,33 @@ from foxy_gh_farmer.util.daemon import shutdown_daemon
 
 
 @click.command("join-pool", short_help="Join your PlotNFTs to the pool")
+@click.option(
+    '-f',
+    '--fee',
+    default=Decimal(0),
+    help="Fee to use for each pool join, in XCH",
+    type=Decimal,
+    show_default=True
+)
 @click.pass_context
-def join_pool_cmd(ctx) -> None:
+def join_pool_cmd(ctx, fee: Decimal) -> None:
     foxy_root: Path = ctx.obj["root_path"]
     config_path: Path = ctx.obj["config_path"]
     foxy_chia_config_manager = FoxyChiaConfigManager(foxy_root)
     foxy_chia_config_manager.ensure_foxy_config(config_path)
 
-    run(join_pool(foxy_root, config_path))
+    if fee >= 0.1:
+        cli_confirm(f"You selected a fee of {fee} XCH, do you really want to continue? (y/n): ")
+
+    fee_raw: uint64 = uint64(int(fee * units["chia"]))
+
+    run(join_pool(foxy_root, config_path, fee=fee_raw))
 
 
 async def join_pool(
     foxy_root: Path,
     config_path: Path,
+    fee: uint64,
 ):
     config = load_config(foxy_root, "config.yaml")
     foxy_config_manager = FoxyConfigManager(config_path)
@@ -72,7 +88,7 @@ async def join_pool(
 
             return
 
-        joined_launcher_ids = await join_plot_nfts_to_pool(wallet_rpc, plot_nfts_not_pooling_with_foxy)
+        joined_launcher_ids = await join_plot_nfts_to_pool(wallet_rpc, plot_nfts_not_pooling_with_foxy, fee=fee)
         if len(joined_launcher_ids) == 0:
             print("❌ Unable to join any of the PlotNFTs, exiting")
 
