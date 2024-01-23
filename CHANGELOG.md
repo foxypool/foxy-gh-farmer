@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Update the pool url to use when joining the pool to one which is highly available.
+
 ## [1.9.0] - 2024-01-07
 
 ### Added
